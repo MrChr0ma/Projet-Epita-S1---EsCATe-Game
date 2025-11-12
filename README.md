@@ -1,13 +1,13 @@
-# 🐱 Projet S1 - Jeu « EsCATe Game »
+#  Projet S1 - Jeu « EsCATe Game »
 
-## 📝 Description
+##  Description
 
 Ce projet consiste à développer un jeu de plateau à deux joueurs nommé **EsCATe Game**.  
 Dans ce jeu, un groupe de chats est retenu dans une pension par deux gardiens. L’objectif pour le premier joueur est de faire s’échapper un maximum de chats, tandis que le second joueur tente de les capturer avant leur fuite.
 
 ---
 
-## 🎯 Objectif
+##  Objectif
 
 Coder un jeu de plateau à deux joueurs où :
 - Un joueur contrôle **14 chats** qui tentent de s’évader.
@@ -15,7 +15,7 @@ Coder un jeu de plateau à deux joueurs où :
 
 ---
 
-## 🧩 Principe du jeu
+##  Principe du jeu
 
 ### Plateau
 - Plateau carré de **11x11 cases**.
@@ -79,7 +79,7 @@ Coder un jeu de plateau à deux joueurs où :
 - `S` : les sorties
 ---
 
-## ⚙️ Contraintes imposées
+##  Contraintes imposées
 
 ### Fonctionnalités de base
 - Jeu à 2 joueurs respectant les règles décrites.
@@ -93,12 +93,12 @@ Deux fonctionnalités supplémentaires doivent être implémentées, par exemple
 
 ---
 
-## 👥 Auteurs
+##  Auteurs
 
 Projet réalisé dans le cadre du Bachelor Cybersécurité à EPITA – Année 2025-26.
 
 ---
 
-## 📄 Licence
+##  Licence
 
 Ce projet est un travail académique et n’est pas destiné à une utilisation commerciale.
