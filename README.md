@@ -46,6 +46,37 @@ Coder un jeu de plateau à deux joueurs où :
 - La partie se joue en **2 manches**.
 - Le gagnant est le joueur avec le **plus de points**.
 
+### Plateau
+- Plateau carré de **11x11 cases**.
+- Contient :
+  - Une **zone de départ** pour les chats (14 cases au centre en bas).
+  - Un **bassin d'eau** infranchissable (6 cases au centre).
+  - **Trois sorties** en (1, F), (5, A) et (5, K).
+
+#### Figure 1 : Exemple d'un plateau initial
+
+```
+    A B C D E F G H I J K
+1           R S          
+2       W   R       W    
+3           O O O        
+4       R   O O O        
+5   S   R               S
+6                        
+7         R              
+8       R   R   R        
+9             C          
+10      C C C             
+11  R   C C C C C        
+    C C C C C            
+```
+
+**Légendes :**
+- `C` : les chats
+- `W` : les deux gardiens (Wardens)
+- `R` : les robots aspirateur
+- `O` : le bassin d'eau
+- `S` : les sorties
 ---
 
 ## ⚙️ Contraintes imposées
