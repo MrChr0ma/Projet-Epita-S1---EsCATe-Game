@@ -57,18 +57,18 @@ Coder un jeu de plateau à deux joueurs où :
 
 ```
     A B C D E F G H I J K
-1           R S          
-2       W   R       W    
+1   R         S          
+2       W       R   W    
 3           O O O        
-4       R   O O O        
-5   S   R               S
-6                        
-7         R              
-8       R   R   R        
-9             C          
-10      C C C             
-11  R   C C C C C        
-    C C C C C            
+4         R O O O        
+5   S     R             S
+6                     R  
+7       R       R   R    
+8             C        
+9           C C C         
+10  R     C C C C C        
+11        C C C C C        
+          
 ```
 
 **Légendes :**
