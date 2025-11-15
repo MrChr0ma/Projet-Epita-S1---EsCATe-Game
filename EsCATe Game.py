@@ -38,7 +38,7 @@ def robot_placement():
 #si elle est valide effectuer le mouvement
 #et demande un autre chat etc...
 #!ATTENTION prendre en compte les sorties (si le chat sort le retirer de la liste_chat et ajouter 1 au score)
-def move_chat(): # A faire Hector
+def move_chat(): # A Hector
     return
 
 
@@ -91,5 +91,6 @@ main()
 # fonction conversion qui va recupérer les coordonnées entrées par l'utilisateur et les convertir en tuple (x,y) (case)
 def conversion(): # A Hector
     return
+
 
 
