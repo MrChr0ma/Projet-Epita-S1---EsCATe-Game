@@ -1,4 +1,5 @@
 import random as rd
+import sys, subprocess
 
 plateau = [["  ","A","B","C","D","E","F","G","H","I","J","K"],
            ["1 ",".",".",".",".",".","S",".",".",".",".","."],
@@ -19,6 +20,7 @@ robot = []
 bassin = [(3,5),(3,6),(3,7),(4,5),(4,6),(4,7)]
 score_A ,score_B = 0,0
 def print_plateau():
+    subprocess.run('clear', shell = True)
     for ligne in plateau:
         for case in ligne:
             print(case,end = " ")
@@ -36,7 +38,7 @@ def robot_placement():
 #si elle est valide effectuer le mouvement
 #et demande un autre chat etc...
 #!ATTENTION prendre en compte les sorties (si le chat sort le retirer de la liste_chat et ajouter 1 au score)
-def move_chat():
+def move_chat(): # A faire Hector
     return
 
 
@@ -49,7 +51,7 @@ def move_chat():
 #si elle est valide effectuer le mouvement
 #et demande le deuxieme gardien
 #!ATTENTION prendre en compte les chat(si on le mange il faut le retirer de la liste)(et ils peuvent sauter par dessus les robot donc rajouter 1 de range)
-def move_gardiens():
+def move_gardiens(): # A Florentin
     return
 
 
@@ -57,7 +59,7 @@ def move_gardiens():
 #calculer une proba de 1/3
 #si 1 alors appeller what_square()
 #effectuer un mvt aleatoire parmi ceux retourner par what_square()
-def move_robot():
+def move_robot(): # A Enzo
     return
 
 
@@ -67,7 +69,7 @@ def move_robot():
 #Elle retourne la liste des cases diponibles pour un deplacement autour
 #Elle est appelée dans les fonctions move_robot, move_chat et move_gardien
 
-def what_square(case :tuple,types:str)->list:
+def what_square(case :tuple,types:str)->list: # A Gaël
     liste_case_disp = []
     if types == "chat":
         return liste_case_disp
@@ -84,8 +86,10 @@ def main():
     robot_placement()
     print_plateau()
 main()
-        
 
 
+# fonction conversion qui va recupérer les coordonnées entrées par l'utilisateur et les convertir en tuple (x,y) (case)
+def conversion(): # A Hector
+    return
 
 
