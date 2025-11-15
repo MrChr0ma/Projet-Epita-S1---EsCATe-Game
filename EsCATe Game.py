@@ -75,17 +75,17 @@ def move_robot(): # A Enzo
 def what_square(case :tuple,types:str)->list: # A Gaël
     liste_case_disp = []
     x,y = case
-    if types == "chat":
+    if types == "C":
         for i in range(-1 if x > 1 else 0,2 if x < 11 else 1):
             for j in range(-1 if y > 1 else 0, 2 if y < 11 else 1):
                 if plateau[x+i][y+j] == "." or plateau[x+i][y+j] == "S":
                     liste_case_disp.append((x+i,y+j))
-    elif types == "gardien":
+    elif types == "W":
         for i in range(-1 if x > 1 else 0,2 if x < 11 else 1):
             for j in range(-1 if y > 1 else 0, 2 if y < 11 else 1):
                 if plateau[x+i][y+j] == "." or plateau[x+i][y+j] == "C" or plateau[x+i][y+j] == "R":
                     liste_case_disp.append((x+i,y+j))
-    elif types == "robot":
+    elif types == "R":
         if plateau[x+1 if x < 11 else 0][y] == ".":
             liste_case_disp.append((x+1,y))
         if plateau[x-1][y] == ".":
@@ -104,4 +104,5 @@ def main():
     robot_placement()
     print_plateau()
 main()
+
 
