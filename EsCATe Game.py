@@ -22,7 +22,7 @@ bassin = [(3,5),(3,6),(3,7),(4,5),(4,6),(4,7)]
 score_A ,score_B = 0,0
 
 def print_plateau():
-    subprocess.run('clear', shell = True)
+    subprocess.run('cls', shell = True)
     for ligne in plateau:
         for case in ligne:
             print(case,end = " ")
@@ -104,3 +104,4 @@ def main():
     robot_placement()
     print_plateau()
 main()
+
