@@ -17,6 +17,7 @@ gardiens = [(2,3),(2,9)]
 sortie = [(1,6),(5,1),(5,11)]
 robot = []
 bassin = [(3,5),(3,6),(3,7),(4,5),(4,6),(4,7)]
+score_A ,score_B = 0,0
 def print_plateau():
     for ligne in plateau:
         for case in ligne:
@@ -29,17 +30,62 @@ def robot_placement():
             robot.append(coordonnées)
     for (x,y) in robot:
         plateau[x][y] = "R"
+#verifie que l'utilisateur bouge 7 chats ou moins si moins de 7 chats
+#demande le chat à bouger et la case choisi
+#appelle what_square() pour savoir si la case est valide
+#si elle est valide effectuer le mouvement
+#et demande un autre chat etc...
+#!ATTENTION prendre en compte les sorties (si le chat sort le retirer de la liste_chat et ajouter 1 au score)
 def move_chat():
     return
+
+
+
+
+
+#verifie que l'utilisateur bouge les 2 gardiens
+#demande le gardiens à bouger et la case choisi
+#appelle what_square() pour savoir si la case est valide
+#si elle est valide effectuer le mouvement
+#et demande le deuxieme gardien
+#!ATTENTION prendre en compte les chat(si on le mange il faut le retirer de la liste)(et ils peuvent sauter par dessus les robot donc rajouter 1 de range)
 def move_gardiens():
     return
+
+
+
+#calculer une proba de 1/3
+#si 1 alors appeller what_square()
+#effectuer un mvt aleatoire parmi ceux retourner par what_square()
 def move_robot():
     return
+
+
+
+
+#La fonction prend en entrée la case de la piece etudié et son type : "chat","gardien" ou "robot" 
+#Elle retourne la liste des cases diponibles pour un deplacement autour
+#Elle est appelée dans les fonctions move_robot, move_chat et move_gardien
+
+def what_square(case :tuple,types:str)->list:
+    liste_case_disp = []
+    if types == "chat":
+        return liste_case_disp
+    elif types == "gardien":
+        return liste_case_disp
+    elif types == "robot":
+        return liste_case_disp
+    
+
+
+
+
 def main():
     robot_placement()
     print_plateau()
 main()
         
+
 
 
 
