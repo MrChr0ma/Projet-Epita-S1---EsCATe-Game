@@ -1,5 +1,5 @@
 import random as rd
-import sys, subprocess
+import subprocess
 
 plateau = [["  ","A","B","C","D","E","F","G","H","I","J","K"],
            ["1 ",".",".",".",".",".","S",".",".",".",".","."],
@@ -13,18 +13,21 @@ plateau = [["  ","A","B","C","D","E","F","G","H","I","J","K"],
            ["9 ",".",".",".",".","C","C","C",".",".",".","."],
            ["10",".",".",".","C","C","C","C","C",".",".","."],
            ["11",".",".",".","C","C","C","C","C",".",".","."]]
+
 chat = [(11,4),(11,5),(11,6),(11,7),(11,8),(10,4),(10,5),(10,6),(10,7),(10,8),(9,5),(9,6),(9,7),(8,6)]
 gardiens = [(2,3),(2,9)]
 sortie = [(1,6),(5,1),(5,11)]
 robot = []
 bassin = [(3,5),(3,6),(3,7),(4,5),(4,6),(4,7)]
 score_A ,score_B = 0,0
+
 def print_plateau():
     subprocess.run('clear', shell = True)
     for ligne in plateau:
         for case in ligne:
             print(case,end = " ")
         print("")
+               
 def robot_placement():
     while len(robot) != 9:
         coordonnées = (rd.randint(1,11),rd.randint(1,11))
@@ -32,6 +35,7 @@ def robot_placement():
             robot.append(coordonnées)
     for (x,y) in robot:
         plateau[x][y] = "R"
+               
 #verifie que l'utilisateur bouge 7 chats ou moins si moins de 7 chats
 #demande le chat à bouger et la case choisi
 #appelle what_square() pour savoir si la case est valide
@@ -91,6 +95,7 @@ main()
 # fonction conversion qui va recupérer les coordonnées entrées par l'utilisateur et les convertir en tuple (x,y) (case)
 def conversion(): # A Hector
     return
+
 
 
 
