@@ -72,30 +72,35 @@ def move_robot(): # A Enzo
 #La fonction prend en entrée la case de la piece etudié et son type : "chat","gardien" ou "robot" 
 #Elle retourne la liste des cases diponibles pour un deplacement autour
 #Elle est appelée dans les fonctions move_robot, move_chat et move_gardien
-
 def what_square(case :tuple,types:str)->list: # A Gaël
     liste_case_disp = []
+    x,y = case
     if types == "chat":
-        return liste_case_disp
+        for i in range(-1 if x > 1 else 0,2 if x < 11 else 1):
+            for j in range(-1 if y > 1 else 0, 2 if y < 11 else 1):
+                if plateau[x+i][y+j] == "." or plateau[x+i][y+j] == "S":
+                    liste_case_disp.append((x+i,y+j))
     elif types == "gardien":
-        return liste_case_disp
+        for i in range(-1 if x > 1 else 0,2 if x < 11 else 1):
+            for j in range(-1 if y > 1 else 0, 2 if y < 11 else 1):
+                if plateau[x+i][y+j] == "." or plateau[x+i][y+j] == "C" or plateau[x+i][y+j] == "R":
+                    liste_case_disp.append((x+i,y+j))
     elif types == "robot":
-        return liste_case_disp
-    
-
-
-
-
-def main():
-    robot_placement()
-    print_plateau()
-main()
-
+        if plateau[x+1 if x < 11 else 0][y] == ".":
+            liste_case_disp.append((x+1,y))
+        if plateau[x-1][y] == ".":
+            liste_case_disp.append((x-1,y))
+        if plateau[x][y+1 if y < 11 else 0] == ".":
+            liste_case_disp.append((x,y+1))
+        if plateau[x][y-1] == ".":
+            liste_case_disp.append((x,y-1))
+    return liste_case_disp
 
 # fonction conversion qui va recupérer les coordonnées entrées par l'utilisateur et les convertir en tuple (x,y) (case)
 def conversion(): # A Hector
     return
 
-
-
-
+def main():
+    robot_placement()
+    print_plateau()
+main()
