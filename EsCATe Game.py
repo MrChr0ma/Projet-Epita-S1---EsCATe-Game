@@ -97,12 +97,25 @@ def what_square(case :tuple,types:str)->list: # A Gaël
     return liste_case_disp
 
 # fonction conversion qui va recupérer les coordonnées entrées par l'utilisateur et les convertir en tuple (x,y) (case)
-def conversion(): # A Hector
-    return
+def conversion(case: str) -> tuple: #A Hector
+    case = case.strip()
+    lettre = ''
+    nombre = ''
+    for c in case:
+        if c.isalpha():
+            lettre += c
+        elif c.isdigit():
+            nombre += c
+    if len(lettre) != 1 or len(nombre) == 0:
+        raise ValueError("Format invalide : ex. A6 ou 6A")
+    colonne = ord(lettre.upper()) - ord('A') + 1  
+    ligne = int(nombre)                           
+    return (ligne, colonne)
 
 def main():
     robot_placement()
     print_plateau()
 main()
+
 
 
