@@ -42,12 +42,128 @@ def robot_placement():
 #si elle est valide effectuer le mouvement
 #et demande un autre chat etc...
 #!ATTENTION prendre en compte les sorties (si le chat sort le retirer de la liste_chat et ajouter 1 au score)
-def move_chat(): # A Hector
-    return
+def move_chat(chat, plateau, score, conversion, what_square): # A Hector
+    """
+    Gère le déplacement de 7 chats maximum
+    
+    Paramètres:
+    - chat: liste des positions des chats [(ligne, colonne), ...]
+    - plateau: grille avec en-têtes
+    - score: score actuel du joueur chat
+    - conversion: fonction qui convertit "A2" ou "2A" en (ligne, colonne)
+    - what_square: fonction qui retourne les cases possibles pour un type de pièce
 
+    A TESTER !!!!!!!!!!!!! Quand il aura toute les fonctions, si il y a plus que 7 chats sur le plateau 
+    et que un des chats n'a pas de case à aller est ce que la fonction va boucler en disant que ce chat ne peut pas bouger et ça va jamais s'arrêter ?
+    
+    Retourne:
+    - chat modifié
+    - score modifié
+    """
+    sorties = [(1, 6), (5, 1), (5, 11)]
+    nb_chats_a_bouger = min(7, len(chat))
+    
+    if len(chat) == 0:
+        print("Il n'y a plus de chats sur le plateau !")
+        return chat, score
+    
+    print(f"\n=== PHASE CHATS ===")
+    print(f"Vous devez déplacer {nb_chats_a_bouger} chat(s).")
+    print(f"Chats disponibles: {len(chat)}")
+    chats_deplaces = []
+    
+    for i in range(nb_chats_a_bouger):
+        print_plateau()
+        print(f"\n--- Déplacement {i+1}/{nb_chats_a_bouger} ---")
+        print("Chats disponibles :")
+        chats_non_deplaces = [c for c in chat if c not in chats_deplaces]
+        
+        if not chats_non_deplaces:
+            print("Tous les chats ont été déplacés !")
+            break
 
+        for index, c in enumerate(chats_non_deplaces):
+            ligne, col = c
+            lettre = plateau[0][col]
+            print(f"  - {lettre}{ligne}")
 
+        while True:
+            choix_input = input(f"Choisir le chat à déplacer (ex: D11, F8): ").strip().upper()
+            
+            try:
+                ligne_choix, col_choix = conversion(choix_input)
+                if (ligne_choix, col_choix) in chats_non_deplaces:
+                    chat_a_bouger = (ligne_choix, col_choix)
+                    break
+                else:
+                    print("\n[ERREUR] Ce chat n'existe pas ou a déjà été déplacé.")
+                    print("Veuillez choisir parmi les chats disponibles ci-dessus.\n")
+                           
+            except (ValueError, IndexError, KeyError):
+                print("\n[ERREUR] Format invalide.")
+                print("Utilisez le format : D11, F8, 2A, etc.\n")
+        
+        ligne_chat, col_chat = chat_a_bouger
+        lettre_chat = plateau[0][col_chat]
+        print(f"Chat sélectionné en position {lettre_chat}{ligne_chat}")
+        cases_possibles = what_square(chat_a_bouger, "C")
+        
+        if not cases_possibles:
+            print("\n[ATTENTION] Aucun déplacement possible pour ce chat !")
+            print("Choisissez un autre chat.\n")
+            continue
 
+        print("Déplacements possibles :")
+               
+        for case in cases_possibles:
+            ligne_case, col_case = case
+            lettre_case = plateau[0][col_case]
+            print(f"  - {lettre_case}{ligne_case}", end="")
+                   
+            if case in sorties:
+                print(" (SORTIE)", end="")
+            print()
+
+        while True:
+            destination = input("Entrer la destination (ex: A2, B3, 2A, 3B): ").strip().upper()
+            
+            try:
+                nouvelle_ligne, nouvelle_colonne = conversion(destination)
+                if (nouvelle_ligne, nouvelle_colonne) in cases_possibles:
+                    if (nouvelle_ligne, nouvelle_colonne) in sorties:
+                        print(f"Le chat s'évade par la sortie en {destination} !")
+                        plateau[chat_a_bouger[0]][chat_a_bouger[1]] = "."
+                        chat.remove(chat_a_bouger)
+                        score += 1
+                        
+                        print(f"Score: {score} chat(s) évadé(s)")
+                        print("\nPlateau mis à jour...")
+                        break
+                               
+                    else:
+                        plateau[chat_a_bouger[0]][chat_a_bouger[1]] = "."
+                        plateau[nouvelle_ligne][nouvelle_colonne] = "C"
+                        index_chat = chat.index(chat_a_bouger)
+                        chat[index_chat] = (nouvelle_ligne, nouvelle_colonne)
+                        chats_deplaces.append((nouvelle_ligne, nouvelle_colonne))
+                        lettre_dest = plateau[0][nouvelle_colonne]
+                        print(f"Chat déplacé vers {lettre_dest}{nouvelle_ligne}")
+                        print("\nPlateau mis à jour...")
+                        break
+                               
+                else:
+                    print("\n[ERREUR] Déplacement invalide !")
+                    print("Cette case n'est pas accessible.")
+                    print("Veuillez choisir parmi les cases possibles affichées ci-dessus.\n")
+                    
+            except (ValueError, IndexError, KeyError):
+                print("\n[ERREUR] Format invalide.")
+                print("Utilisez le format : A2, B3, 2A, 3B, etc.\n")
+    
+    print(f"\n=== FIN PHASE CHATS ===")
+    print(f"Score actuel: {score} chat(s) évadé(s)")
+
+    return chat, score
 
 #verifie que l'utilisateur bouge les 2 gardiens
 #demande le gardiens à bouger et la case choisi
@@ -116,6 +232,7 @@ def main():
     robot_placement()
     print_plateau()
 main()
+
 
 
 
