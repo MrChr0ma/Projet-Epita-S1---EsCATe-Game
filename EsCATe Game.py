@@ -68,7 +68,7 @@ def move_chat(chat, plateau, score, conversion, what_square): # A Hector
         return chat, score
     
     print(f"\n=== PHASE CHATS ===")
-    print(f"Vous devez déplacer {nb_chats_a_bouger} chat(s).")
+    print(f"Vous devez déplacer {nb_chats_a_bouger} chat{'s' if nb_chats_a_bouger > 1 else ''}.")
     print(f"Chats disponibles: {len(chat)}")
     chats_deplaces = []
     
@@ -232,6 +232,7 @@ def main():
     robot_placement()
     print_plateau()
 main()
+
 
 
 
