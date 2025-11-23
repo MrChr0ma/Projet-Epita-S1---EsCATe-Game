@@ -171,10 +171,84 @@ def move_chat(chat, plateau, score, conversion, what_square): # A Hector
 #si elle est valide effectuer le mouvement
 #et demande le deuxieme gardien
 #!ATTENTION prendre en compte les chat(si on le mange il faut le retirer de la liste)(et ils peuvent sauter par dessus les robot donc rajouter 1 de range)
-def move_gardiens(): # A Florentin
-    return
+def move_gardiens(gardiens,chat,plateau): # A Florentin
+           '''
+           Paramètres:
+           - Gardiens: liste des positions des gardiens
+           - Chat: liste des positions des chats
+           - Plateau: grille de jeu
 
+           Retourne: 
+           - Gardiens modifié
+           '''
+           print(f"\n=== PHASE GARDIENS ===")
+    for x,y in gardiens:
+        plateau[x][y]="."
 
+    choice=int(input("Entrer le gardien que vous souhaitez déplacer 0 ou 1: "))
+    first_choice=choice
+    second_choice=1-first_choice
+    chat_capture=0
+
+    while True:
+        choose_case=input("entrer la case ou va le premier gardien: ")
+        case=conversion(choose_case)
+        posx,posy=gardiens[first_choice]
+        x,y=case
+
+        if plateau[x][y]=="R":
+            saut_x=x-posx
+            saut_y=y-posy
+            new_x=x+saut_x
+            new_y=y+saut_y
+            case=(new_x,new_y)
+
+        if plateau[x][y]=="C":
+            if (x,y) in chat:
+                chat.remove((x,y))
+                chat_capture+=1
+                       
+        case_dispo= what_square(gardiens[first_choice],"W")
+        if case not in case_dispo:
+            case_dispo.append(case)
+        if case in case_dispo:
+            break
+        print("case invalide, nouvelle case: ")
+    gardiens[first_choice]= case
+    while True:
+        choose_case=input("Entrer une case ou va le second gardien: ")
+        case=conversion(choose_case)
+        posx,posy=gardiens[second_choice]
+        x,y=case
+
+        if plateau[x][y]=="R":
+            saut_x=x-posx
+            saut_y=y-posy
+            new_x=x+saut_x
+            new_y=y+saut_y
+            case=(new_x,new_y)
+
+        if plateau[x][y]=="C":
+            if (x,y) in chat:
+                chat.remove((x,y))
+                chat_capture+=1
+
+        case_dispo= what_square(gardiens[second_choice],"W")
+        if case not in case_dispo:
+            case_dispo.append(case)
+        if case in case_dispo:
+            break
+        print("case invalide, nouvelle case: ")
+    gardiens[second_choice]= case
+
+    for x,y in gardiens:
+        plateau[x][y]="W"
+
+    print_plateau()
+
+    print(f"\n=== FIN PHASE GARDIENS ===")
+    print(f" {chat_capture} chat(s) capturé(s)")
+    return gardiens
 
 #calculer une proba de 1/3
 #si 1 alors appeller what_square()
@@ -232,6 +306,7 @@ def main():
     robot_placement()
     print_plateau()
 main()
+
 
 
 
