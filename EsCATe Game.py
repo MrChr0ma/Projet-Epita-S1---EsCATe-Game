@@ -253,8 +253,19 @@ def move_gardiens(gardiens,chat,plateau): # A Florentin
 #calculer une proba de 1/3
 #si 1 alors appeller what_square()
 #effectuer un mvt aleatoire parmi ceux retourner par what_square()
-def move_robot(): # A Enzo
-    return
+def move_robot(robot,chat,plateau): # A Enzo
+    position_robot = []
+    for i in range(len(robot)) :
+        for x,y in robot :
+            peut_bouger = rd.randint(1,3)
+            if peut_bouger == 1 :
+                position_robot.append(x, y)
+                case_dispo = what_square((x,y), "R")
+                nouvelle_coordonne_x, nouvelle_coordonne_y = rd.choice(case_dispo)
+                plateau[x][y] = "."
+                plateau[nouvelle_coordonne_x][nouvelle_coordonne_y] = "R"
+                position_robot.append(nouvelle_coordonne_x,nouvelle_coordonne_y)
+        return position_robot
 
 
 
@@ -306,6 +317,7 @@ def main():
     robot_placement()
     print_plateau()
 main()
+
 
 
 
