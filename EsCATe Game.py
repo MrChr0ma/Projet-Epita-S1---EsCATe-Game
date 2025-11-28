@@ -58,18 +58,26 @@ def move_chat(chat, plateau, score, conversion, what_square):
     - chat modifié
     - score modifié
     """
-    
+
+    # ---------------------#
+    #  Codes couleur ANSI  #
+    # ---------------------#
+    RED = "\033[91m"
+    GREEN = "\033[92m"
+    YELLOW = "\033[93m"
+    RESET = "\033[0m"
+
     # -------------------------------#
     #  Fonction d'affichage d'erreur #
     # -------------------------------#
     def error(msg):
         print("\n" + "!"*50)
-        print(f"  ERREUR : {msg}")
+        print(f"{RED}  ERREUR : {msg}{RESET}")
         print("!"*50 + "\n")
 
-    # -------------------------------#
-    #  Clear terminal                #
-    # -------------------------------#
+    # -----------------#
+    #  Clear terminal  #
+    # -----------------#
     def clear_terminal():
         if platform.system() == "Windows":
             subprocess.run('cls', shell=True)
@@ -107,18 +115,18 @@ def move_chat(chat, plateau, score, conversion, what_square):
         
         while not deplacement_effectue:
 
-            # ---------------------#
-            # Affichage des chats  #
-            # ---------------------#
+            # --------------------#
+            # Affichage des chats #
+            # --------------------#
             print("Chats disponibles :")
             for c in chats_non_deplaces:
                 ligne, col = c
                 lettre = plateau[0][col]
                 print(f"  - {lettre}{ligne}")
 
-            # ---------------------#
-            # Choix du chat        #
-            # ---------------------#
+            # --------------#
+            # Choix du chat #
+            # --------------#
             while True:
                 choix_input = input(f"Choisir le chat à déplacer (ex: D11, F8): ").strip().upper()
 
@@ -134,29 +142,29 @@ def move_chat(chat, plateau, score, conversion, what_square):
                     error("Format invalide. Exemple : A6, D11, 2A...")
 
             ligne_chat, col_chat = chat_a_bouger
-            lettre_chat = plateau[0][col_chat]
-            
-            print(f"\nChat sélectionné : {lettre_chat}{ligne_chat}")
-
+            # --------------------------------#
+            # Colorer le chat dans le plateau #
+            # --------------------------------#
+            plateau[ligne_chat][col_chat] = f"{GREEN}C{RESET}"
             cases_possibles = what_square(chat_a_bouger, "C")
 
             if not cases_possibles:
                 error("Aucun déplacement possible pour ce chat.")
+                plateau[ligne_chat][col_chat] = "C" 
                 continue
 
             for case in cases_possibles:
                 x, y = case
                 if plateau[x][y] == ".":
-                    plateau[x][y] = "*"
+                    plateau[x][y] = f"{YELLOW}*{RESET}"
 
-            input("\nAppuyez sur Entrée pour afficher les déplacements possibles...")
             clear_terminal()
             print_plateau()
 
-            # -----------------------------#
-            # Affichage des déplacements   #
-            # -----------------------------#
-            print("Déplacements possibles :")
+            # ---------------------------#
+            # Affichage des déplacements #
+            # ---------------------------#
+            print("Déplacements possibles (tapez 'RETOUR' ou 'BACK' pour changer de chat) :")
             for case in cases_possibles:
                 ligne_case, col_case = case
                 lettre_case = plateau[0][col_case]
@@ -165,25 +173,35 @@ def move_chat(chat, plateau, score, conversion, what_square):
                     msg += " (SORTIE)"
                 print(msg)
 
-            # -----------------------------#
-            # Choix de la destination      #
-            # -----------------------------#
+            # ------------------------#
+            # Choix de la destination #
+            # ------------------------#
             while True:
-                destination = input("\nDestination (A2, B3, 2A, ...): ").strip().upper()
+                destination = input("\nDestination (A2, B3, 2A, ...) : ").strip().upper()
+
+                # Permet de revenir en arrière
+                if destination in ["RETOUR", "BACK"]:
+                    # enlever le chat coloré
+                    plateau[ligne_chat][col_chat] = "C"
+                    # enlever les *
+                    for x, y in cases_possibles:
+                        if plateau[x][y] == f"{YELLOW}*{RESET}":
+                            plateau[x][y] = "."
+                    deplacement_effectue = False
+                    break
 
                 try:
                     nouvelle_ligne, nouvelle_colonne = conversion(destination)
 
                     if (nouvelle_ligne, nouvelle_colonne) in cases_possibles:
 
-                        # Enlève les *
                         for x, y in cases_possibles:
-                            if plateau[x][y] == "*":
+                            if plateau[x][y] == f"{YELLOW}*{RESET}":
                                 plateau[x][y] = "."
 
-                        # -----------------------------#
-                        # Cas sortie → chat évadé      #
-                        # -----------------------------#
+                        # -------------------------#
+                        # Cas sortie → chat évadé  #
+                        # -------------------------#
                         if (nouvelle_ligne, nouvelle_colonne) in sorties:
                             print(f"\nLe chat s'évade par la sortie {destination} !")
 
@@ -198,11 +216,11 @@ def move_chat(chat, plateau, score, conversion, what_square):
                             deplacement_effectue = True
                             break
 
-                        # -----------------------------#
-                        # Déplacement normal           #
-                        # -----------------------------#
+                        # -------------------#
+                        # Déplacement normal #
+                        # -------------------#
                         plateau[ligne_chat][col_chat] = "."
-                        plateau[nouvelle_ligne][nouvelle_colonne] = "C"
+                        plateau[nouvelle_ligne][nouvelle_colonne] = f"{GREEN}C{RESET}"
                         idx = chat.index(chat_a_bouger)
                         chat[idx] = (nouvelle_ligne, nouvelle_colonne)
 
@@ -223,14 +241,13 @@ def move_chat(chat, plateau, score, conversion, what_square):
 
 
             for x, y in cases_possibles:
-                if plateau[x][y] == "*":
+                if plateau[x][y] == f"{YELLOW}*{RESET}":
                     plateau[x][y] = "."
 
     print(f"\n=== FIN PHASE CHATS ===")
     print(f"Score actuel : {score} chat(s) évadé(s)")
 
     return chat, score
-
 #verifie que l'utilisateur bouge les 2 gardiens
 #demande le gardiens à bouger et la case choisi
 #appelle what_square() pour savoir si la case est valide
@@ -381,6 +398,7 @@ def main():
     robot_placement()
     print_plateau()
 main()
+
 
 
 
