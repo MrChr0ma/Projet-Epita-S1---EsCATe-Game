@@ -91,7 +91,7 @@ def move_chat(chat, plateau, score, conversion, what_square):
         print("Il n'y a plus de chats sur le plateau !")
         return chat, score
 
-    print(f"\n=== PHASE CHATS ===")
+    print("\n=== PHASE CHATS ===")
     print(f"Vous devez déplacer {nb_chats_a_bouger} chat(s).")
     print(f"Chats disponibles: {len(chat)}")
     chats_deplaces = []
@@ -128,7 +128,7 @@ def move_chat(chat, plateau, score, conversion, what_square):
             # Choix du chat #
             # --------------#
             while True:
-                choix_input = input(f"Choisir le chat à déplacer (ex: D11, F8): ").strip().upper()
+                choix_input = input("Choisir le chat à déplacer (ex: D11, F8): ").strip().upper()
 
                 try:
                     ligne_choix, col_choix = conversion(choix_input)
@@ -179,11 +179,8 @@ def move_chat(chat, plateau, score, conversion, what_square):
             while True:
                 destination = input("\nDestination (A2, B3, 2A, ...) : ").strip().upper()
 
-                # Permet de revenir en arrière
                 if destination in ["RETOUR", "BACK"]:
-                    # enlever le chat coloré
                     plateau[ligne_chat][col_chat] = "C"
-                    # enlever les *
                     for x, y in cases_possibles:
                         if plateau[x][y] == f"{YELLOW}*{RESET}":
                             plateau[x][y] = "."
@@ -239,15 +236,15 @@ def move_chat(chat, plateau, score, conversion, what_square):
                 except (ValueError, IndexError, KeyError):
                     error("Format invalide. Exemple : A2, B3, 2A...")
 
-
             for x, y in cases_possibles:
                 if plateau[x][y] == f"{YELLOW}*{RESET}":
                     plateau[x][y] = "."
 
-    print(f"\n=== FIN PHASE CHATS ===")
+    print("\n=== FIN PHASE CHATS ===")
     print(f"Score actuel : {score} chat(s) évadé(s)")
 
     return chat, score
+           
 #verifie que l'utilisateur bouge les 2 gardiens
 #demande le gardiens à bouger et la case choisi
 #appelle what_square() pour savoir si la case est valide
@@ -398,6 +395,7 @@ def main():
     robot_placement()
     print_plateau()
 main()
+
 
 
 
