@@ -118,11 +118,18 @@ def move_chat(chat, plateau, score, conversion, what_square):
             # --------------------#
             # Affichage des chats #
             # --------------------#
-            print("Chats disponibles :")
+           print("Chats pouvant être déplacés :")
+            disponibles = []
             for c in chats_non_deplaces:
-                ligne, col = c
-                lettre = plateau[0][col]
-                print(f"  - {lettre}{ligne}")
+                if what_square(c, "C"):
+                    ligne, col = c
+                    lettre = plateau[0][col]
+                    print(f"  - {lettre}{ligne}")
+                    disponibles.append(c)
+            if not disponibles:
+                print("  Aucun chat disponible pour déplacement.")
+                deplacement_effectue = True
+                break
 
             # --------------#
             # Choix du chat #
@@ -408,6 +415,7 @@ def main():
     robot_placement()
     print_plateau()
 main()
+
 
 
 
