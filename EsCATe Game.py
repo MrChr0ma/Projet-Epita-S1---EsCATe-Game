@@ -72,7 +72,7 @@ def move_chat(chat, plateau, score, conversion, what_square):
     # -------------------------------#
     def error(msg):
         print("\n" + f"{RED}!{RESET}"*50)
-        print(f"{RED} FERREUR : {msg}{RESET}")
+        print(f"{RED} ERREUR : {msg}{RESET}")
         print(f"{RED}!{RESET}"*50 + "\n")
 
     # -----------------#
@@ -92,7 +92,7 @@ def move_chat(chat, plateau, score, conversion, what_square):
         return chat, score
 
     print("\n=== PHASE CHATS ===")
-    print(f"Vous devez déplacer {nb_chats_a_bouger} chat(s).")
+    print(f"Vous devez déplacer {nb_chats_a_bouger} chat{'s' if nb_chats_a_bouger > 1 else ''}.")
     print(f"Chats disponibles: {len(chat)}")
     chats_deplaces = []
 
@@ -219,7 +219,7 @@ def move_chat(chat, plateau, score, conversion, what_square):
 
                             clear_terminal()
                             print_plateau()
-                            print(f"Score : {score} chat(s) évadé(s)\n")
+                            print(f"Score : {score} chat{'s' if score > 1 else ''} évadé{'s' if score > 1 else ''}\n")
 
                             deplacement_effectue = True
                             break
@@ -261,7 +261,7 @@ def move_chat(chat, plateau, score, conversion, what_square):
                     plateau[x][y] = "."
 
     print("\n=== FIN PHASE CHATS ===")
-    print(f"Score actuel : {score} chat(s) évadé(s)")
+    print(f"Score actuel : {score} chat{'s' if score > 1 else ''} évadé{'s' if score > 1 else ''}")
 
     return chat, score
            
@@ -347,7 +347,7 @@ def move_gardiens(gardiens,chat,plateau): # A Florentin
     print_plateau()
 
     print(f"\n=== FIN PHASE GARDIENS ===")
-    print(f" {chat_capture} chat(s) capturé(s)")
+    print(f" {chat_capture} chat{'s' if chat_capture > 1 else ''} capturé{'s' if chat_capture > 1 else ''}")
     return gardiens
 
 #calculer une proba de 1/3
@@ -364,8 +364,6 @@ def move_robot(robot,chat,plateau): # A Enzo
                 indice = robot.index((x,y))
                 robot[indice] = (nouvelle_cordonne_x, nouvelle_cordonney)
            return
-
-
 
 
 #La fonction prend en entrée la case de la piece etudié et son type : "chat","gardien" ou "robot" 
@@ -412,9 +410,32 @@ def conversion(case: str) -> tuple: #A Hector
     return (ligne, colonne)
 
 def main():
+    global chat, plateau,robot,gardiens
     robot_placement()
     print_plateau()
+    #game 1
+    while len(chat) != 0:
+        move_chat(chat,plateau,score_A,conversion,what_square)
+        move_gardiens(gardiens,chat,plateau)
+        move_robot(robot,plateau)
+    #game 2
+    plateau = plateau_initial[:]
+    chat = [(11,4),(11,5),(11,6),(11,7),(11,8),(10,4),(10,5),(10,6),(10,7),(10,8),(9,5),(9,6),(9,7),(8,6)]
+    gardiens = [(2,3),(2,9)]
+    robot=[]
+    robot_placement()
+    while len(chat) != 0:
+        move_chat(chat,plateau,score_B,conversion,what_square)
+        move_gardiens(gardiens,chat,plateau)
+        move_robot(robot,plateau)
+    if score_A > score_B:
+        print("Le joueur A a gagné")
+    elif score_A < score_B:
+        print("Le joueur B a gagné")
+    else:
+        print("EGALITE")
 main()
+
 
 
 
