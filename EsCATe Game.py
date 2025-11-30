@@ -71,9 +71,9 @@ def move_chat(chat, plateau, score, conversion, what_square):
     #  Fonction d'affichage d'erreur #
     # -------------------------------#
     def error(msg):
-        print("\n" + "!"*50)
-        print(f"{RED}  ERREUR : {msg}{RESET}")
-        print("!"*50 + "\n")
+        print("\n" + f"{RED}!{RESET}"*50)
+        print(f"{RED} FERREUR : {msg}{RESET}")
+        print(f"{RED}!{RESET}"*50 + "\n")
 
     # -----------------#
     #  Clear terminal  #
@@ -149,6 +149,8 @@ def move_chat(chat, plateau, score, conversion, what_square):
             cases_possibles = what_square(chat_a_bouger, "C")
 
             if not cases_possibles:
+                clear_terminal()
+                print_plateau()
                 error("Aucun déplacement possible pour ce chat.")
                 plateau[ligne_chat][col_chat] = "C" 
                 continue
@@ -185,6 +187,8 @@ def move_chat(chat, plateau, score, conversion, what_square):
                         if plateau[x][y] == f"{YELLOW}*{RESET}":
                             plateau[x][y] = "."
                     deplacement_effectue = False
+                    clear_terminal()
+                    print_plateau()
                     break
 
                 try:
@@ -231,7 +235,16 @@ def move_chat(chat, plateau, score, conversion, what_square):
                         break
 
                     else:
+                        clear_terminal()
+                        print_plateau()
                         error("Déplacement invalide, choisissez une case affichée.")
+                        for case in cases_possibles:
+                            ligne_case, col_case = case
+                            lettre_case = plateau[0][col_case]
+                            msg = f"  - {lettre_case}{ligne_case}"
+                            if case in sorties:
+                                msg += " (SORTIE)"
+                            print(msg)
 
                 except (ValueError, IndexError, KeyError):
                     error("Format invalide. Exemple : A2, B3, 2A...")
@@ -395,6 +408,7 @@ def main():
     robot_placement()
     print_plateau()
 main()
+
 
 
 
