@@ -21,14 +21,14 @@ sortie = [(1,6),(5,1),(5,11)]
 robot = []
 bassin = [(3,5),(3,6),(3,7),(4,5),(4,6),(4,7)]
 score_A ,score_B = 0,0
-
+#affiche le plateau dans le terminal
 def print_plateau():
     subprocess.run('cls', shell = True)
     for ligne in plateau:
         for case in ligne:
             print(case,end = " ")
         print("")
-               
+#place les robots en debut de partie
 def robot_placement():
     while len(robot) != 9:
         coordonnées = (rd.randint(1,11),rd.randint(1,11))
@@ -408,7 +408,7 @@ def conversion(case: str) -> tuple: #A Hector
     colonne = ord(lettre.upper()) - ord('A') + 1  
     ligne = int(nombre)                           
     return (ligne, colonne)
-
+#agence les fonctions pour rendre le jeux jouable
 def main():
     global chat, plateau,robot,gardiens
     robot_placement()
@@ -435,6 +435,7 @@ def main():
     else:
         print("EGALITE")
 main()
+
 
 
 
