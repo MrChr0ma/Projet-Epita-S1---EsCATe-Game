@@ -15,6 +15,8 @@ plateau = [["  ","A","B","C","D","E","F","G","H","I","J","K"],
            ["10",".",".",".","C","C","C","C","C",".",".","."],
            ["11",".",".",".","C","C","C","C","C",".",".","."]]
 
+plateau_initial = [row[:] for row in plateau]
+
 chat = [(11,4),(11,5),(11,6),(11,7),(11,8),(10,4),(10,5),(10,6),(10,7),(10,8),(9,5),(9,6),(9,7),(8,6)]
 gardiens = [(2,3),(2,9)]
 sortie = [(1,6),(5,1),(5,11)]
@@ -112,13 +114,12 @@ def move_chat(chat, plateau, score, conversion, what_square):
             break
 
         deplacement_effectue = False
-        
-        while not deplacement_effectue:
 
+        while not deplacement_effectue:
             # --------------------#
             # Affichage des chats #
             # --------------------#
-           print("Chats pouvant être déplacés :")
+            print("Chats pouvant être déplacés :")
             disponibles = []
             for c in chats_non_deplaces:
                 if what_square(c, "C"):
@@ -272,16 +273,16 @@ def move_chat(chat, plateau, score, conversion, what_square):
 #et demande le deuxieme gardien
 #!ATTENTION prendre en compte les chat(si on le mange il faut le retirer de la liste)(et ils peuvent sauter par dessus les robot donc rajouter 1 de range)
 def move_gardiens(gardiens,chat,plateau): # A Florentin
-           '''
-           Paramètres:
-           - Gardiens: liste des positions des gardiens
-           - Chat: liste des positions des chats
-           - Plateau: grille de jeu
+    '''
+        Paramètres:
+        - Gardiens: liste des positions des gardiens
+        - Chat: liste des positions des chats
+        - Plateau: grille de jeu
 
-           Retourne: 
-           - Gardiens modifié
-           '''
-    print(f"\n=== PHASE GARDIENS ===")
+        Retourne: 
+        - Gardiens modifié
+    '''
+    print("\n=== PHASE GARDIENS ===")
 
     print("\nGardiens disponibles :")
     for i in range(len(gardiens)):
@@ -436,7 +437,7 @@ def move_gardiens(gardiens,chat,plateau): # A Florentin
         plateau[x][y]="W"
     print_plateau()
 
-    print(f"\n=== FIN PHASE GARDIENS ===")        
+    print("\n=== FIN PHASE GARDIENS ===")        
     print(f" {chat_capture} chat{'s' if chat_capture > 1 else ''} capturé{'s' if chat_capture > 1 else ''}")
     return gardiens
 
@@ -444,16 +445,16 @@ def move_gardiens(gardiens,chat,plateau): # A Florentin
 #si 1 alors appeller what_square()
 #effectuer un mvt aleatoire parmi ceux retourner par what_square()
 def move_robot(robot,chat,plateau): # A Enzo
-        for x,y in robot :
-            peut_bouger = rd.randint(1,3)
-            if peut_bouger == 1 :
-                case_dispo = what_square((x,y), "R")
-                nouvelle_coordonne_x, nouvelle_coordonne_y = rd.choice(case_dispo)
-                plateau[x][y] = "."
-                plateau[nouvelle_coordonne_x][nouvelle_coordonne_y] = "R"
-                indice = robot.index((x,y))
-                robot[indice] = (nouvelle_cordonne_x, nouvelle_cordonney)
-           return
+    for x,y in robot :
+        peut_bouger = rd.randint(1,3)
+        if peut_bouger == 1 :
+            case_dispo = what_square((x,y), "R")
+            nouvelle_coordonne_x, nouvelle_coordonne_y = rd.choice(case_dispo)
+            plateau[x][y] = "."
+            plateau[nouvelle_coordonne_x][nouvelle_coordonne_y] = "R"
+            indice = robot.index((x,y))
+            robot[indice] = (nouvelle_coordonne_x, nouvelle_coordonne_y)
+    return
 
 
 #La fonction prend en entrée la case de la piece etudié et son type : "chat","gardien" ou "robot" 
@@ -505,9 +506,11 @@ def main():
     print_plateau()
     #game 1
     while len(chat) != 0:
-        move_chat(chat,plateau,score_A,conversion,what_square)
-        move_gardiens(gardiens,chat,plateau)
-        move_robot(robot,plateau)
+        move_chat(chat, plateau, score_A, conversion, what_square)
+        move_gardiens(gardiens, chat, plateau)
+        move_robot(robot, chat, plateau)
+    #game 2
+    plateau = [row[:] for row in plateau_initial]
     #game 2
     plateau = plateau_initial[:]
     chat = [(11,4),(11,5),(11,6),(11,7),(11,8),(10,4),(10,5),(10,6),(10,7),(10,8),(9,5),(9,6),(9,7),(8,6)]
@@ -525,20 +528,3 @@ def main():
     else:
         print("EGALITE")
 main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
