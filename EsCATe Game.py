@@ -281,72 +281,162 @@ def move_gardiens(gardiens,chat,plateau): # A Florentin
            Retourne: 
            - Gardiens modifié
            '''
-           print(f"\n=== PHASE GARDIENS ===")
-    for x,y in gardiens:
-        plateau[x][y]="."
+    print(f"\n=== PHASE GARDIENS ===")
+
+    print("\nGardiens disponibles :")
+    for i in range(len(gardiens)):
+        ligne, col = gardiens[i]
+        lettre = plateau[0][col]
+        print(f"  Gardien {i} : {lettre}{ligne}")
 
     choice=int(input("Entrer le gardien que vous souhaitez déplacer 0 ou 1: "))
     first_choice=choice
     second_choice=1-first_choice
     chat_capture=0
 
-    while True:
+    case_dispo = what_square(gardiens[first_choice],"W")
+    print(f"\nCases disponibles pour le gardien {first_choice} :")
+    for ligne, col in case_dispo:
+        lettre = plateau[0][col]
+        print(f"  - {lettre}{ligne}")
+
+    choose_case=input("entrer la case ou va le premier gardien: ")
+    case=conversion(choose_case)
+    case_dispo= what_square(gardiens[first_choice],"W")
+    for x,y in gardiens:
+        plateau[x][y]="."
+    while case not in case_dispo:
         choose_case=input("entrer la case ou va le premier gardien: ")
         case=conversion(choose_case)
-        posx,posy=gardiens[first_choice]
-        x,y=case
+        print("case invalide: ")
 
-        if plateau[x][y]=="R":
-            saut_x=x-posx
-            saut_y=y-posy
-            new_x=x+saut_x
-            new_y=y+saut_y
-            case=(new_x,new_y)
+    posx,posy=gardiens[first_choice]
+    x,y=case
 
-        if plateau[x][y]=="C":
-            if (x,y) in chat:
-                chat.remove((x,y))
-                chat_capture+=1
-                       
-        case_dispo= what_square(gardiens[first_choice],"W")
-        if case not in case_dispo:
-            case_dispo.append(case)
-        if case in case_dispo:
-            break
-        print("case invalide, nouvelle case: ")
+    if plateau[x][y]=="R":
+        saut_x=x-posx
+        saut_y=y-posy
+        new_x=x+saut_x
+        new_y=y+saut_y
+        case=(new_x,new_y)
+        if not (1<=new_x<=11 and 1<=new_y<=11):
+            for x,y in gardiens:
+                plateau[x][y]="W"
+            print("Case invalide: ")
+            choose_case=input("entrer la case ou va le premier gardien: ")
+            case=conversion(choose_case)
+            case_dispo= what_square(gardiens[first_choice],"W")
+            for x,y in gardiens:
+                plateau[x][y]="."
+            while case not in case_dispo:
+                choose_case=input("entrer la case ou va le premier gardien: ")
+                case=conversion(choose_case)
+                print("case invalide: ")
+        else:
+            while 1<=new_x<=11 and 1<=new_y<=11 and plateau[new_x][new_y]=="R":
+                saut_x=new_x-x
+                saut_y=new_y-y
+                new_x+=saut_x
+                new_y+=saut_y
+            if 1<=new_x<=11 and 1<=new_y<=11 and plateau[new_x][new_y] not in ["S","O","W"]:
+                case=(new_x,new_y)
+            else:
+                for x,y in gardiens:
+                    plateau[x][y]="W"
+                print("Case invalide: ")
+                choose_case=input("entrer la case ou va le premier gardien: ")
+                case=conversion(choose_case)
+                case_dispo= what_square(gardiens[first_choice],"W")
+                for x,y in gardiens:
+                    plateau[x][y]="."
+                while case not in case_dispo:
+                    choose_case=input("entrer la case ou va le premier gardien: ")
+                    case=conversion(choose_case)
+                    print("case invalide: ")
+                
+
+    if plateau[x][y]=="C":
+        if (x,y) in chat:
+            chat.remove((x,y))
+            chat_capture+=1
+
     gardiens[first_choice]= case
-    while True:
+    for x,y in gardiens:
+        plateau[x][y]="W"
+    print_plateau()
+
+    case_dispo = what_square(gardiens[second_choice],"W")
+    print(f"\nCases disponibles pour le gardien {second_choice} :")
+    for ligne, col in case_dispo:
+        lettre = plateau[0][col]
+        print(f"  - {lettre}{ligne}")
+
+    choose_case=input("Entrer une case ou va le second gardien: ")
+    case=conversion(choose_case)
+    case_dispo= what_square(gardiens[second_choice],"W")
+    for x,y in gardiens:
+        plateau[x][y]="."
+    while case not in case_dispo:
         choose_case=input("Entrer une case ou va le second gardien: ")
         case=conversion(choose_case)
-        posx,posy=gardiens[second_choice]
-        x,y=case
+        print("case invalide: ")
 
-        if plateau[x][y]=="R":
-            saut_x=x-posx
-            saut_y=y-posy
-            new_x=x+saut_x
-            new_y=y+saut_y
-            case=(new_x,new_y)
 
-        if plateau[x][y]=="C":
-            if (x,y) in chat:
-                chat.remove((x,y))
-                chat_capture+=1
+    posx,posy=gardiens[second_choice]
+    x,y=case
+    if plateau[x][y]=="R":
+        saut_x=x-posx
+        saut_y=y-posy
+        new_x=x+saut_x
+        new_y=y+saut_y
+        if not (1<=new_x<=11 and 1<=new_y<=11):
+            for x,y in gardiens:
+                plateau[x][y]="W"
+            print("Case invalide: ")
+            choose_case=input("Entrer une case ou va le second gardien: ")
+            case=conversion(choose_case)
+            case_dispo= what_square(gardiens[second_choice],"W")
+            for x,y in gardiens:
+                plateau[x][y]="."
+            while case not in case_dispo:
+                choose_case=input("Entrer une case ou va le second gardien: ")
+                case=conversion(choose_case)
+                print("case invalide: ")
+        else:
+            while 1<=new_x<=11 and 1<=new_y<=11 and plateau[new_x][new_y]=="R":
+                saut_x=new_x-x
+                saut_y=new_y-y
+                new_x+=saut_x
+                new_y+=saut_y
+            if 1<=new_x<=11 and 1<=new_y<=11 and plateau[new_x][new_y] not in ["S","O","W"]:
+                case=(new_x,new_y)
+            else:
+                for x,y in gardiens:
+                    plateau[x][y]="W"
+                print("Case invalide: ")
+                choose_case=input("Entrer une case ou va le second gardien: ")
+                case=conversion(choose_case)
+                case_dispo= what_square(gardiens[second_choice],"W")
+                for x,y in gardiens:
+                    plateau[x][y]="."
+                while case not in case_dispo:
+                    choose_case=input("Entrer une case ou va le second gardien: ")
+                    case=conversion(choose_case)
+                    print("case invalide: ")
 
-        case_dispo= what_square(gardiens[second_choice],"W")
-        if case not in case_dispo:
-            case_dispo.append(case)
-        if case in case_dispo:
-            break
-        print("case invalide, nouvelle case: ")
+    if plateau[x][y]=="C":
+        if (x,y) in chat:
+            chat.remove((x,y))
+            chat_capture+=1
+
+
     gardiens[second_choice]= case
 
     for x,y in gardiens:
         plateau[x][y]="W"
-
     print_plateau()
 
-    print(f"\n=== FIN PHASE GARDIENS ===")
+    print(f"\n=== FIN PHASE GARDIENS ===")        
     print(f" {chat_capture} chat{'s' if chat_capture > 1 else ''} capturé{'s' if chat_capture > 1 else ''}")
     return gardiens
 
@@ -435,6 +525,7 @@ def main():
     else:
         print("EGALITE")
 main()
+
 
 
 
