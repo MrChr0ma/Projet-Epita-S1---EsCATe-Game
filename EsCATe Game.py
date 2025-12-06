@@ -197,6 +197,7 @@ def move_chat(chat, plateau, score, conversion, what_square):
                     deplacement_effectue = False
                     clear_terminal()
                     print_plateau()
+                    print(f"\n--- Déplacement {i+1}/{nb_chats_a_bouger} ---")
                     break
 
                 try:
@@ -528,3 +529,4 @@ def main():
     else:
         print("EGALITE")
 main()
+
