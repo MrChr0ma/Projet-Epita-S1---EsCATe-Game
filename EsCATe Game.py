@@ -501,22 +501,26 @@ def main():
         print("Le joueur B a gagné")
     else:
         print("EGALITE")
+
 def menu() :
     print("Entrer le nom du joueur 1 :")
     nom_j1 = str(input())
     print("Entrer le nom du joueur 2 :")
     nom_j2 = str(input())
     print(nom_j1, nom_j2)
-    print("1 : Lancer la partie" \
-          "2 : Règles du jeu"\
+    print("1 : Lancer la partie " \
+          "2 : Règles du jeu "\
           "Sélectioner 1 ou 2")
     nb = int(input())
-    while nb != 1 or nb != 2 :
-        print("Selectioner 1 ou 2")
+    if nb != 1 or nb != 2 :
+        print(" ")
     if nb == 2 :
         print("Le jeu EsCATe Game se joue à deux joueurs, sur un plateau carré de 11x11 cases," 
-        "qui représente une pension pour chats. L’un des joueurs contrôle un groupe de" \
-        "quatorze chats qui essaient de s’évader. L’autre joueur contrôle deux gardiens qui" \
+        "" \
+        "qui représente une pension pour chats. L’un des joueurs contrôle un groupe de"\
+        "" \
+        "quatorze chats qui essaient de s’évader. L’autre joueur contrôle deux gardiens qui"\
+        "" \
         "tentent de capturer les chats avant leur fuite."
         "Il existe trois types d’acteurs dans ce jeu, les chats, les gardiens, et des robots " \
         "aspirateur autonomes, activés par les gardiens pour effrayer les chats:"
@@ -570,8 +574,10 @@ def menu() :
         "Le joueur contrôlant les gardiens ne gagne pas de points. Le rôle de chaque joueur est inversé pour la manche suivante. " \
         "Une partie compte deux manches."
         "Lorsque la partie est terminée, le gagnant est le joueur possédant le plus de points.")
-    else :
+    if nb == 1  :
         print(nom_j1, nom_j2, "Que le/la meilleur(e) gagne.")
+    return ""
 
 main()
+
 
