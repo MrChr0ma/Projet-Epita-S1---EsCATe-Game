@@ -329,16 +329,19 @@ def move_gardiens(gardiens,chat,plateau): # A Florentin
     for ligne, col in case_dispo:
         lettre = plateau[0][col]
         print(f"  - {lettre}{ligne}")
-        choose_case=input("Sur quelle case souhaitez vous déplacer le premier gardien : ").strip().upper()
+       
+    while True:
 
+        choose_case=input("Sur quelle case souhaitez vous déplacer le second gardien : ").strip().upper()
         try:
-                    case = conversion(choose_case)
-                    if case not in case_dispo:
-                        print("La case que vous avez selectionné n'est pas valide. Veuillez choisir une des cases valides ci-dessus")
-                    else:
-                        break
-        except (ValueError, IndexError, KeyError):
-                    print("Format invalide. Exemple : A6, D11, 2A...")
+            case=conversion(choose_case)
+            if case not in case_dispo:
+                print("la case que vous souhaitez selectionné n'est pas valide. Veuillez choisir une des cases valides ci-dessus")
+            else:
+                break
+        except (ValueError,IndexError,KeyError):
+            print("Format invalide. Exemple : A6, D11, 2A...")
+
 
     posx,posy=gardiens[first_choice]
     x,y=case
@@ -436,7 +439,6 @@ def move_gardiens(gardiens,chat,plateau): # A Florentin
     print("\n=== FIN PHASE GARDIENS ===")
     print(f" {chat_capture} chat{'s' if chat_capture > 1 else ''} capturé{'s' if chat_capture > 1 else ''}")
     return gardiens
-
 #place les robots aleatoirement au debut
 def robot_placement():
     global robot
@@ -607,6 +609,7 @@ def menu() :
     return ""
 
 main()
+
 
 
 
