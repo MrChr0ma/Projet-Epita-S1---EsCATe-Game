@@ -506,8 +506,84 @@ def what_square(case :tuple,types:str,plateau:list)->list: # A Gaël
             if plateau[x][y+j if y+j != 12 else 0] == ".":
                 liste_case_disp.append((x,y+j))
     return liste_case_disp
+def menu():
+    print("Entrer le nom du joueur 1 :")
+    nom_j1 = str(input())
+    print("Entrer le nom du joueur 2 :")
+    nom_j2 = str(input())
+    print("1 : Lancer la partie \n2 : Règles du jeu \nSélectioner 1 ou 2")
+    nb = input()
+    while nb not in ["1","2"]:
+        print("Selection Invalide. Veuillez sélectioner 1 ou 2")
+        nb = input()
+    if nb == "2" :
+        print("Le jeu EsCATe Game se joue à deux joueurs, sur un plateau carré de 11x11 cases," 
+            "" \
+            "qui représente une pension pour chats. L’un des joueurs contrôle un groupe de"\
+            "" \
+            "quatorze chats qui essaient de s’évader. L’autre joueur contrôle deux gardiens qui"\
+            "" \
+            "tentent de capturer les chats avant leur fuite."
+            "Il existe trois types d’acteurs dans ce jeu, les chats, les gardiens, et des robots " \
+            "aspirateur autonomes, activés par les gardiens pour effrayer les chats:"
+                        "- Le groupe de chats est composé de quatorze chats. Chaque chat"
+                        "occupe une case du plateau. Ils commencent la partie dans une zone"
+                        "qui leur est réservée (voir Figure 1)."
+                        "- Les deux gardiens occupent chacun une case. Ils commencent"
+                        "toujours la partie en position (2, C) et (2, I) du plateau en Figure 1."
+                        "- Neuf robots aspirateur autonomes ont été activés par les gardiens."
+                        "Chaque robot occupe une case et forme un obstacle infranchissable"
+                        "pour les chats. Ils commencent la partie sur neuf cases tirées"
+                        "aléatoirement."
+                        "Le plateau est illustré par la Figure 2. Il est composé de 11x11 cases et comporte deux " \
+                        "zones spéciales et trois sorties réparties comme suit :"
+                        "- Une zone où le groupe de chats débute la partie. Cette zone fait " \
+                        "quatorze cases et se situe au centre, en bas du plateau. " \
+                        "Les gardiens et les robot aspirateur ne peuvent pas y pénétrer."\
+                        "- Une zone centrale qui représente un bassin d’eau infranchissable "\
+                        "pour les chats, les gardiens, et les robots aspirateur. Ce bassin est" \
+                        " rectangulaire et s’étale sur six cases au total. " \
+                        "Il est représenté par six ’O’ dans la Figure 1."
+                        "- Trois sorties sont disposées en position (1, F ), (5, A), et (5, K) " \
+                        "du plateau en Figure 1, représentées par trois ’S’. Une sortie occupe une" \
+                        "case. Un chat s’évade lorsqu’il se positionne sur une case sortie. Les " \
+                        "gardiens et les robots ne peuvent pas se positionner sur une sortie."
+            "Sur le plateau, chaque acteur (chat, gardien, robot) se déplace au maximum d’une " \
+            "case par tour, à l’horizontale, à la verticale, ou en diagonale (pas de déplacement en" \
+            "diagonale pour les robots)."
+            
+            "Les déplacements spécifiques sont les suivants :  "
+                "- Un chat s’évade en se déplaçant sur une case sortie, et il disparaît directement du plateau."
+                "- Un gardien capture un chat lorsqu’il se déplace sur la case occupé par cechat."
+                "- Seuls les gardiens peuvent sauter par-dessus un robot aspirateur : lors " \
+                "d’un déplacement, les gardiens peuvent choisir une case occupée" \
+                "par un robot ; ils se retrouvent alors sur la case à l’opposée du robot."
+                "- Le bassin d’eau est infranchissable pour les chats, les gardiens, et les robots " \
+                "  aspirateur"
+            "Un tour de jeu est décomposé en trois phases : " \
+                "Phase ‘chats’ : Le joueur contrôlant les chats en déplace sept, ceux de son choix"
+                    ".Un chat ne peut être déplacé qu’une fois par tour." \
+                "Phase ‘gardiens’ : L’autre joueur déplace les deux gardiens. " \
+                    "Un gardien ne peutêtre déplacé qu’une fois par tour." \
+                "Phase ‘robots’ : Les robots sont autonomes. A chaque tour, chaque robot a une" \
+                    "chance sur trois de bouger. Il se déplace alors d’une case dans une directionaléatoire," \
+                    "horizontale ou verticale."
+
+            "Une manche se termine lorsqu’il ne reste plus de chats sur le plateau, c’est-à-dire que " \
+            "chaque chat s’est évadé ou a été capturé par les gardiens avant sa fuite."
+
+            "A la fin d’une manche, le joueur contrôlant les chats gagne un point pour chaque chat qui s’est évadé. " \
+            "Le joueur contrôlant les gardiens ne gagne pas de points. Le rôle de chaque joueur est inversé pour la manche suivante. " \
+            "Une partie compte deux manches."
+            "Lorsque la partie est terminée, le gagnant est le joueur possédant le plus de points.")
+        time.sleep(100)
+        
+    if nb == "1"  :
+        print(nom_j1, nom_j2, "Que le/la meilleur(e) gagne.")
+    return
 def main():
     global chat, plateau,robot,gardiens
+    menu()
     robot_placement()
     print_plateau()
     #game 1
@@ -531,84 +607,8 @@ def main():
         print("Le joueur B a gagné")
     else:
         print("EGALITE")
-
-def menu() :
-    print("Entrer le nom du joueur 1 :")
-    nom_j1 = str(input())
-    print("Entrer le nom du joueur 2 :")
-    nom_j2 = str(input())
-    print(nom_j1, nom_j2)
-    print("1 : Lancer la partie " \
-          "2 : Règles du jeu "\
-          "Sélectioner 1 ou 2")
-    nb = int(input())
-    if nb != 1 or nb != 2 :
-        print(" ")
-    if nb == 2 :
-        print("Le jeu EsCATe Game se joue à deux joueurs, sur un plateau carré de 11x11 cases," 
-        "" \
-        "qui représente une pension pour chats. L’un des joueurs contrôle un groupe de"\
-        "" \
-        "quatorze chats qui essaient de s’évader. L’autre joueur contrôle deux gardiens qui"\
-        "" \
-        "tentent de capturer les chats avant leur fuite."
-        "Il existe trois types d’acteurs dans ce jeu, les chats, les gardiens, et des robots " \
-        "aspirateur autonomes, activés par les gardiens pour effrayer les chats:"
-                    "- Le groupe de chats est composé de quatorze chats. Chaque chat"
-                    "occupe une case du plateau. Ils commencent la partie dans une zone"
-                    "qui leur est réservée (voir Figure 1)."
-                    "- Les deux gardiens occupent chacun une case. Ils commencent"
-                    "toujours la partie en position (2, C) et (2, I) du plateau en Figure 1."
-                    "- Neuf robots aspirateur autonomes ont été activés par les gardiens."
-                    "Chaque robot occupe une case et forme un obstacle infranchissable"
-                    "pour les chats. Ils commencent la partie sur neuf cases tirées"
-                    "aléatoirement."
-                    "Le plateau est illustré par la Figure 2. Il est composé de 11x11 cases et comporte deux " \
-                    "zones spéciales et trois sorties réparties comme suit :"
-                    "- Une zone où le groupe de chats débute la partie. Cette zone fait " \
-                    "quatorze cases et se situe au centre, en bas du plateau. " \
-                    "Les gardiens et les robot aspirateur ne peuvent pas y pénétrer."\
-                    "- Une zone centrale qui représente un bassin d’eau infranchissable "\
-                    "pour les chats, les gardiens, et les robots aspirateur. Ce bassin est" \
-                    " rectangulaire et s’étale sur six cases au total. " \
-                    "Il est représenté par six ’O’ dans la Figure 1."
-                    "- Trois sorties sont disposées en position (1, F ), (5, A), et (5, K) " \
-                    "du plateau en Figure 1, représentées par trois ’S’. Une sortie occupe une" \
-                    "case. Un chat s’évade lorsqu’il se positionne sur une case sortie. Les " \
-                    "gardiens et les robots ne peuvent pas se positionner sur une sortie."
-        "Sur le plateau, chaque acteur (chat, gardien, robot) se déplace au maximum d’une " \
-        "case par tour, à l’horizontale, à la verticale, ou en diagonale (pas de déplacement en" \
-        "diagonale pour les robots)."
-        
-        "Les déplacements spécifiques sont les suivants :  "
-            "- Un chat s’évade en se déplaçant sur une case sortie, et il disparaît directement du plateau."
-            "- Un gardien capture un chat lorsqu’il se déplace sur la case occupé par cechat."
-            "- Seuls les gardiens peuvent sauter par-dessus un robot aspirateur : lors " \
-            "d’un déplacement, les gardiens peuvent choisir une case occupée" \
-            "par un robot ; ils se retrouvent alors sur la case à l’opposée du robot."
-            "- Le bassin d’eau est infranchissable pour les chats, les gardiens, et les robots " \
-            "  aspirateur"
-        "Un tour de jeu est décomposé en trois phases : " \
-            "Phase ‘chats’ : Le joueur contrôlant les chats en déplace sept, ceux de son choix"
-                ".Un chat ne peut être déplacé qu’une fois par tour." \
-            "Phase ‘gardiens’ : L’autre joueur déplace les deux gardiens. " \
-                "Un gardien ne peutêtre déplacé qu’une fois par tour." \
-            "Phase ‘robots’ : Les robots sont autonomes. A chaque tour, chaque robot a une" \
-                "chance sur trois de bouger. Il se déplace alors d’une case dans une directionaléatoire," \
-                "horizontale ou verticale."
-
-        "Une manche se termine lorsqu’il ne reste plus de chats sur le plateau, c’est-à-dire que " \
-        "chaque chat s’est évadé ou a été capturé par les gardiens avant sa fuite."
-
-        "A la fin d’une manche, le joueur contrôlant les chats gagne un point pour chaque chat qui s’est évadé. " \
-        "Le joueur contrôlant les gardiens ne gagne pas de points. Le rôle de chaque joueur est inversé pour la manche suivante. " \
-        "Une partie compte deux manches."
-        "Lorsque la partie est terminée, le gagnant est le joueur possédant le plus de points.")
-    if nb == 1  :
-        print(nom_j1, nom_j2, "Que le/la meilleur(e) gagne.")
-    return ""
-
 main()
+
 
 
 
