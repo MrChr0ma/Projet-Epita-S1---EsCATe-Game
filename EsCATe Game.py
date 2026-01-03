@@ -286,6 +286,16 @@ def move_gardiens(gardiens,chat,plateau): # A Florentin
         Retourne:
         - Gardiens modifié
     '''
+    RED = "\033[91m"
+    GREEN = "\033[92m"
+    YELLOW = "\033[93m"
+    RESET = "\033[0m"
+
+    def error(msg):
+        print("\n" + f"{RED}!{RESET}"*50)
+        print(f"{RED} ERREUR : {msg}{RESET}")
+        print(f"{RED}!{RESET}"*50 + "\n")
+
     global chat_capture
     print_plateau()
     print("\n=== PHASE GARDIENS ===")
@@ -305,24 +315,29 @@ def move_gardiens(gardiens,chat,plateau): # A Florentin
     ligne, col = gardiens[first_choice]
     lettre = plateau[0][col]
     gardien_coord = lettre+str(ligne)
+    plateau[ligne][col]=f"{RED}W{RESET}"
     case_dispo = what_square(gardiens[first_choice],"W",plateau)
+    for case in case_dispo:
+        x, y = case
+        if plateau[x][y] == ".":
+            plateau[x][y] = f"{YELLOW}*{RESET}"
+
+
     clear_terminal()
     print_plateau()
     print(f"\nCases disponibles pour le gardien {gardien_coord} :")
     for ligne, col in case_dispo:
         lettre = plateau[0][col]
         print(f"  - {lettre}{ligne}")
+        choose_case=input("Sur quelle case souhaitez vous déplacer le premier gardien : ").strip().upper()
 
-    while True:
-                choose_case=input("Sur quelle case souhaitez vous déplacer le premier gardien : ").strip().upper()
-
-                try:
+        try:
                     case = conversion(choose_case)
                     if case not in case_dispo:
                         print("La case que vous avez selectionné n'est pas valide. Veuillez choisir une des cases valides ci-dessus")
                     else:
                         break
-                except (ValueError, IndexError, KeyError):
+        except (ValueError, IndexError, KeyError):
                     print("Format invalide. Exemple : A6, D11, 2A...")
 
     posx,posy=gardiens[first_choice]
@@ -337,26 +352,35 @@ def move_gardiens(gardiens,chat,plateau): # A Florentin
                 chat_capture+=1
         gardiens[first_choice]= case
         plateau[posx][posy] = '.'
-        plateau[x][y] = 'W'
+        plateau[x][y] = f"{RED}W{RESET}"
     elif plateau[x][y]=="C":
         if (x,y) in chat:
             chat.remove((x,y))
             chat_capture+=1
         gardiens[first_choice]= case
         plateau[posx][posy] = '.'
-        plateau[x][y] = 'W'
+        plateau[x][y] = f"{RED}W{RESET}"
     else:
         gardiens[first_choice]= case
         plateau[posx][posy] = '.'
-        plateau[x][y] = 'W'
+        plateau[x][y] = f"{RED}W{RESET}"
+    for x, y in case_dispo:
+           if plateau[x][y] == f"{YELLOW}*{RESET}":
+            plateau[x][y] = "."
+
                
     clear_terminal()
     print_plateau()
-
+    ligne, col = gardiens[second_choice]
+    plateau[ligne][col]=f"{RED}W{RESET}"
     case_dispo = what_square(gardiens[second_choice],"W",plateau)
+    for case in case_dispo:
+        x, y = case
+        if plateau[x][y] == ".":
+            plateau[x][y] = f"{YELLOW}*{RESET}"
     clear_terminal()
     print_plateau()
-    ligne, col = gardiens[second_choice]
+   
     lettre = plateau[0][col]
     gardien_coord = lettre+str(ligne)
     print(f"\nCases disponibles pour le gardien {gardien_coord} :")
@@ -389,18 +413,22 @@ def move_gardiens(gardiens,chat,plateau): # A Florentin
                 chat_capture+=1
        gardiens[second_choice]=case
        plateau[posx][posy] = '.'
-       plateau[x][y] = 'W'
+       plateau[x][y] = f"{RED}W{RESET}"
     elif plateau[x][y]=="C":
         if (x,y) in chat:
             chat.remove((x,y))
             chat_capture+=1
         gardiens[second_choice]= case
         plateau[posx][posy] = '.'
-        plateau[x][y] = 'W'
+        plateau[x][y] = f"{RED}W{RESET}"
     else:
         gardiens[second_choice]= case
         plateau[posx][posy] = '.'
-        plateau[x][y] = 'W'
+        plateau[x][y] = f"{RED}W{RESET}"
+    for x, y in case_dispo:
+           if plateau[x][y] == f"{YELLOW}*{RESET}":
+            plateau[x][y] = "."
+
 
     clear_terminal()
     print_plateau()
@@ -579,5 +607,6 @@ def menu() :
     return ""
 
 main()
+
 
 
