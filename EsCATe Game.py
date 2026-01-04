@@ -21,6 +21,9 @@ sortie = [(1,6),(5,1),(5,11)]
 robot = []
 bassin = [(3,5),(3,6),(3,7),(4,5),(4,6),(4,7)]
 score_A ,score_B = 0,0
+chat_immobile=[]
+filet_restant=2
+pos_filet=[]
 
 def print_plateau():
     for ligne in plateau:
@@ -53,7 +56,7 @@ def move_chat(chat, plateau, score, conversion, what_square):
     - chat modifié
     - score modifié
     """
-
+    global chat_immobile
     # ---------------------#
     #  Codes couleur ANSI  #
     # ---------------------#
@@ -91,7 +94,7 @@ def move_chat(chat, plateau, score, conversion, what_square):
         print_plateau()
         print(f"\n--- Déplacement {i+1}/{nb_chats_a_bouger} ---")
 
-        chats_non_deplaces = [c for c in chat if c not in chats_deplaces]
+        chats_non_deplaces = [c for c in chat if c not in chats_deplaces and c not in chat_immobile]
 
         if not chats_non_deplaces:
             print("Tous les chats ont été déplacés !")
@@ -199,7 +202,10 @@ def move_chat(chat, plateau, score, conversion, what_square):
                         if (nouvelle_ligne, nouvelle_colonne) in sorties:
                             print(f"\nLe chat s'évade par la sortie {destination} !")
 
-                            plateau[ligne_chat][col_chat] = "."
+                            if (ligne_chat,col_chat) in pos_filet:
+                                plateau[ligne_chat][col_chat]="F"
+                            else:
+                                plateau[ligne_chat][col_chat]="."
                             chat.remove(chat_a_bouger)
                             score += 1
 
@@ -213,7 +219,10 @@ def move_chat(chat, plateau, score, conversion, what_square):
                         # -------------------#
                         # Déplacement normal #
                         # -------------------#
-                        plateau[ligne_chat][col_chat] = "."
+                        if (ligne_chat,col_chat) in pos_filet:
+                                plateau[ligne_chat][col_chat]="F"
+                        else:
+                                plateau[ligne_chat][col_chat]="."
                         plateau[nouvelle_ligne][nouvelle_colonne] = f"{GREEN}C{RESET}"
                         idx = chat.index(chat_a_bouger)
                         chat[idx] = (nouvelle_ligne, nouvelle_colonne)
@@ -251,6 +260,7 @@ def move_chat(chat, plateau, score, conversion, what_square):
     for minou in chat:
         x , y = minou
         plateau[x][y] = "C"
+    chat_immobile=[]
 
     return chat, score
 
@@ -271,6 +281,97 @@ def jump_robots(pos_gardien,case_init,plateau):
             return None
     except IndexError:
         return None
+
+#Place 2 filets pour bloquer les chats pendant 1 tour
+def filet(plateau,chat):
+    global filet_restant,chat_immobile,pos_filet
+    #------------------------#
+    # Vérification des filets#
+    #------------------------#
+    if filet_restant==0:
+        print("Vous avez utilisé vos 2 filets")
+        return
+    for (x,y) in pos_filet:
+        if plateau[x][y]==".":
+            plateau[x][y]= "F"
+    
+    print("f\n== PLACEMENT DES FILETS ===")
+    print(f"Filets restants: {filet_restant}")
+    print("Faite entrer pour ne pas placer de filet sinon tapez la case souhiatez")
+
+    #------------------#
+    # Choix de la case #
+    #------------------#
+    while filet_restant>0:
+        placement_filet=input("Sur quelle case souhaitez vous placer le filet : ").strip().upper()
+        if placement_filet=="":
+            print("Aucun filet joué ce tour")
+            break
+        try:
+            #-----------#
+            # 1ère case #
+            #-----------#
+            placement_final=conversion(placement_filet)
+            x,y=placement_final
+            if plateau[x][y]==".":
+                plateau[x][y] ="F"
+                pos_filet.append((x,y))
+                filet_restant-=1
+                if filet_restant>0:
+                    suivant=input("Voulez vous placer un autre filet? Y/N: ")
+                    if suivant not in ["y","yes","Y","YES"]:
+                        break
+
+            #-----------#
+            # 2ème case #
+            #-----------#
+                    else:
+                        placement_filet=input("Sur quelle case souhaitez vous placer le filet : ").strip().upper()
+                        placement_final2=conversion(placement_filet)
+                        x2,y2=placement_final2
+                        if plateau[x2][y2]==".":
+                            plateau[x2][y2] ="F"
+                            pos_filet.append((x2,y2))
+                            filet_restant-=1
+                        elif plateau[x2][y2]=="C":
+                            if (x2,y2) in chat:
+                                chat_immobile.append((x2,y2))
+                                print("Chat immobilisé pour 1 tour")
+                                filet_restant-=1
+                                print(f"Filets restants: {filet_restant}")
+                        print("Tous les filets sont utilisés")
+                        break
+
+
+            elif plateau[x][y]=="C":
+                pos_filet.append((x,y))
+                if (x,y) in chat:
+                    chat_immobile.append((x,y))
+                    print("Chat immobilisé pour 1 tour")
+                filet_restant-=1
+                print(f"Filets restants: {filet_restant}")
+                if filet_restant>0:
+                    suivant=input("Voulez vous placer un autre filet? Y/N: ")
+                    if suivant not in ["y","yes","Y","YES"]:
+                        break
+                    else:
+                        placement_filet=input("Sur quelle case souhaitez vous placer le filet : ").strip().upper()
+                        placement_final2=conversion(placement_filet)
+                        x2,y2=placement_final2
+                        if plateau[x2][y2]==".":
+                            plateau[x2][y2] ="F"
+                            pos_filet.append((x2,y2))
+                            filet_restant-=1
+                        elif plateau[x2][y2]=="C":
+                            if (x2,y2) in chat:
+                                chat_immobile.append((x2,y2))
+                                print("Chat immobilisé pour 1 tour")
+                                filet_restant-=1
+                                print(f"Filets restants: {filet_restant}")
+                        print("Tous les filets sont utilisés")
+                        break
+        except (ValueError,IndexError,KeyError):
+            print("Format invalide. Exemple : A6, D11, 2A...")
 
 #verifie que l'utilisateur bouge les 2 gardiens
 #demande le gardiens à bouger et la case choisi
@@ -298,15 +399,25 @@ def move_gardiens(gardiens,chat,plateau): # A Florentin
         print("\n" + f"{RED}!{RESET}"*50)
         print(f"{RED} ERREUR : {msg}{RESET}")
         print(f"{RED}!{RESET}"*50 + "\n")
+    
+ 
 
     global chat_capture
     print_plateau()
     print("\n=== PHASE GARDIENS ===")
+    filet(plateau,chat)
+    #-----------------------------------#
+    # Affichage des gardiens disponible #
+    #-----------------------------------#
     print("\nGardiens disponibles :")
     for i in range(len(gardiens)):
         ligne, col = gardiens[i]
         lettre = plateau[0][col]
         print(f"  Gardien {i} : {lettre}{ligne}")
+
+    #------------------#
+    # Choix du gardien #
+    #------------------#
     choice=input("Entrer le gardien que vous souhaitez déplacer 0 ou 1 : ")
     while choice not in ['1','0']:
         print("Entrez invalide vous devez rentrer 0 ou 1 en fonction du gardiens ci-dessus que vous souhaitez déplacer")
@@ -319,20 +430,25 @@ def move_gardiens(gardiens,chat,plateau): # A Florentin
     lettre = plateau[0][col]
     gardien_coord = lettre+str(ligne)
     plateau[ligne][col]=f"{RED}W{RESET}"
+
+    #----------------------#
+    # Destination possible #
+    #----------------------#
     case_dispo = what_square(gardiens[first_choice],"W",plateau)
     for case in case_dispo:
         x, y = case
         if plateau[x][y] == ".":
             plateau[x][y] = f"{YELLOW}*{RESET}"
-
-
     clear_terminal()
     print_plateau()
     print(f"\nCases disponibles pour le gardien {gardien_coord} :")
     for ligne, col in case_dispo:
         lettre = plateau[0][col]
         print(f"  - {lettre}{ligne}")
-       
+    
+    #-------------------#
+    # Choix destination #
+    #-------------------#
     while True:
 
         choose_case=input("Sur quelle case souhaitez vous déplacer le second gardien : ").strip().upper()
@@ -345,7 +461,9 @@ def move_gardiens(gardiens,chat,plateau): # A Florentin
         except (ValueError,IndexError,KeyError):
             print("Format invalide. Exemple : A6, D11, 2A...")
 
-
+    #-------------#
+    # Déplacement #
+    #-------------#
     posx,posy=gardiens[first_choice]
     x,y=case
 
@@ -356,27 +474,27 @@ def move_gardiens(gardiens,chat,plateau): # A Florentin
             if (x,y) in chat:
                 chat.remove((x,y))
                 chat_capture+=1
-        gardiens[first_choice]= case
-        plateau[posx][posy] = '.'
-        plateau[x][y] = f"{RED}W{RESET}"
     elif plateau[x][y]=="C":
         if (x,y) in chat:
             chat.remove((x,y))
             chat_capture+=1
-        gardiens[first_choice]= case
-        plateau[posx][posy] = '.'
-        plateau[x][y] = f"{RED}W{RESET}"
+    if (posx,posy) in pos_filet:
+        plateau[posx][posy]="F"
     else:
-        gardiens[first_choice]= case
-        plateau[posx][posy] = '.'
-        plateau[x][y] = f"{RED}W{RESET}"
+        plateau[posx][posy]="."
+    
+    gardiens[first_choice]= case
+    plateau[x][y] = f"{RED}W{RESET}"
     for x, y in case_dispo:
            if plateau[x][y] == f"{YELLOW}*{RESET}":
             plateau[x][y] = "."
-
-               
+  
     clear_terminal()
     print_plateau()
+
+    #----------------------#
+    # Destination possible #
+    #----------------------#
     ligne, col = gardiens[second_choice]
     plateau[ligne][col]=f"{RED}W{RESET}"
     case_dispo = what_square(gardiens[second_choice],"W",plateau)
@@ -394,6 +512,9 @@ def move_gardiens(gardiens,chat,plateau): # A Florentin
         lettre = plateau[0][col]
         print(f"  - {lettre}{ligne}")
 
+    #-------------------#
+    # Choix destination #
+    #-------------------#
     while True:
 
         choose_case=input("Sur quelle case souhaitez vous déplacer le second gardien : ").strip().upper()
@@ -407,6 +528,9 @@ def move_gardiens(gardiens,chat,plateau): # A Florentin
             print("Format invalide. Exemple : A6, D11, 2A...")
 
 
+    #-------------#
+    # Déplacement #
+    #-------------#
     posx,posy=gardiens[second_choice]
     x,y=case
            
@@ -417,20 +541,18 @@ def move_gardiens(gardiens,chat,plateau): # A Florentin
             if (x,y) in chat:
                 chat.remove((x,y))
                 chat_capture+=1
-       gardiens[second_choice]=case
-       plateau[posx][posy] = '.'
-       plateau[x][y] = f"{RED}W{RESET}"
     elif plateau[x][y]=="C":
         if (x,y) in chat:
             chat.remove((x,y))
             chat_capture+=1
-        gardiens[second_choice]= case
-        plateau[posx][posy] = '.'
-        plateau[x][y] = f"{RED}W{RESET}"
+    if (posx,posy) in pos_filet:
+        plateau[posx][posy]="F"
     else:
-        gardiens[second_choice]= case
-        plateau[posx][posy] = '.'
-        plateau[x][y] = f"{RED}W{RESET}"
+        plateau[posx][posy]="."
+    
+    gardiens[second_choice]= case
+    plateau[x][y] = f"{RED}W{RESET}"
+
     for x, y in case_dispo:
            if plateau[x][y] == f"{YELLOW}*{RESET}":
             plateau[x][y] = "."
@@ -590,6 +712,8 @@ def main():
     robot_placement()
     print_plateau()
     #game 1
+    filet_restant=2
+    pos_filet=[]
     while len(chat) != 0:
         move_chat(chat,plateau,score_A,conversion,what_square)
         move_gardiens(gardiens,chat,plateau)
@@ -599,6 +723,8 @@ def main():
     chat = [(11,4),(11,5),(11,6),(11,7),(11,8),(10,4),(10,5),(10,6),(10,7),(10,8),(9,5),(9,6),(9,7),(8,6)]
     gardiens = [(2,3),(2,9)]
     robot=[]
+    filet_restant=2
+    pos_filet=[]
     robot_placement()
     while len(chat) != 0:
         move_chat(chat,plateau,score_B,conversion,what_square)
@@ -611,6 +737,7 @@ def main():
     else:
         print("EGALITE")
 main()
+
 
 
 
