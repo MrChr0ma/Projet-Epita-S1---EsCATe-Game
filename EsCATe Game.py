@@ -739,6 +739,25 @@ def main():
         print("EGALITE")
 main()
 
+def portail(plateau):
+    """
+    Place deux portails de téléportation '0' sur des cases vides du plateau.
+    """
+    cases_vides = []
+    for i in range(1, len(plateau)):
+        for j in range(1, len(plateau[i])):
+            if plateau[i][j] == ".":
+                cases_vides.append((i, j))
+
+    if len(cases_vides) < 2:
+        print("Pas assez de cases libres pour le placement des portails.")
+        return plateau
+
+    portail1, portail2 = rd.sample(cases_vides, 2)
+    plateau[portail1[0]][portail1[1]] = "0"
+    plateau[portail2[0]][portail2[1]] = "0"
+
+    return plateau
 
 
 
