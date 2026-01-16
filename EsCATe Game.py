@@ -53,7 +53,7 @@ def print_plateau():
             cell_type = get_cell_type(case)
             # Colorer selon le type d'élément
             if cell_type == "C":
-                print(f"{ORANGE}C{RESET}", end=" ")
+                print(f"{BLUE}C{RESET}", end=" ")
             elif cell_type == "W":
                 print(f"{RED}W{RESET}", end=" ")
             elif cell_type == "R":
@@ -683,4 +683,5 @@ def main():
         print(f"{YELLOW}ÉGALITÉ !{RESET}")
 
 main()
+
 
