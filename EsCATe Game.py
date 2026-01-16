@@ -1,7 +1,18 @@
 import random as rd
 import subprocess
 import platform
-import time
+
+# Codes couleur ANSI
+RESET = "\033[0m"
+RED = "\033[91m"
+GREEN = "\033[92m"
+YELLOW = "\033[93m"
+BLUE = "\033[94m"
+MAGENTA = "\033[95m"
+CYAN = "\033[96m"
+WHITE = "\033[97m"
+ORANGE = "\033[38;5;214m"
+GRAY = "\033[90m"
 
 plateau_initial = [ ["  ","A","B","C","D","E","F","G","H","I","J","K"],
                     ["1 ",".",".",".",".",".","S",".",".",".",".","."],
@@ -25,22 +36,48 @@ bassin = [(3,5),(3,6),(3,7),(4,5),(4,6),(4,7)]
 portail = []
 score_A ,score_B = 0,0
 
+def get_cell_type(cell):
+    """Retourne le type de cellule en ignorant les codes couleur"""
+    if isinstance(cell, str):
+        # Enlève les codes ANSI pour obtenir le caractère réel
+        cell_clean = cell.replace(RESET, "").replace(RED, "").replace(GREEN, "")
+        cell_clean = cell_clean.replace(YELLOW, "").replace(BLUE, "").replace(MAGENTA, "")
+        cell_clean = cell_clean.replace(CYAN, "").replace(WHITE, "").replace(ORANGE, "").replace(GRAY, "")
+        return cell_clean
+    return cell
+
 def print_plateau():
-    for ligne in plateau:
-        for case in ligne:
-            print(case,end = " ")
-        print("")               
+    """Affiche le plateau avec des couleurs"""
+    for i, ligne in enumerate(plateau):
+        for j, case in enumerate(ligne):
+            cell_type = get_cell_type(case)
+            # Colorer selon le type d'élément
+            if cell_type == "C":
+                print(f"{ORANGE}C{RESET}", end=" ")
+            elif cell_type == "W":
+                print(f"{RED}W{RESET}", end=" ")
+            elif cell_type == "R":
+                print(f"{GRAY}R{RESET}", end=" ")
+            elif cell_type == "O":
+                print(f"{CYAN}O{RESET}", end=" ")
+            elif cell_type == "S":
+                print(f"{GREEN}S{RESET}", end=" ")
+            elif cell_type == "T":
+                print(f"{MAGENTA}T{RESET}", end=" ")
+            elif cell_type == ".":
+                print(f"{WHITE}.{RESET}", end=" ")
+            elif i == 0 or j == 0:  # En-têtes (lettres et numéros)
+                print(f"{BLUE}{case}{RESET}", end=" ")
+            else:
+                print(case, end=" ")
+        print("")
+
 def clear_terminal():
-        if platform.system() == "Windows":
-            subprocess.run('cls', shell=True)
-        else:
-            subprocess.run('clear', shell=True)           
-#verifie que l'utilisateur bouge 7 chats ou moins si moins de 7 chats
-#demande le chat à bouger et la case choisi
-#appelle what_square() pour savoir si la case est valide
-#si elle est valide effectuer le mouvement
-#et demande un autre chat etc...
-#!ATTENTION prendre en compte les sorties (si le chat sort le retirer de la liste_chat et ajouter 1 au score)
+    if platform.system() == "Windows":
+        subprocess.run('cls', shell=True)
+    else:
+        subprocess.run('clear', shell=True)
+
 def move_chat(chat, plateau, score, conversion, what_square):
     """
     Gère le déplacement de 7 chats maximum
@@ -57,17 +94,6 @@ def move_chat(chat, plateau, score, conversion, what_square):
     - score modifié
     """
 
-    # ---------------------#
-    #  Codes couleur ANSI  #
-    # ---------------------#
-    RED = "\033[91m"
-    GREEN = "\033[92m"
-    YELLOW = "\033[93m"
-    RESET = "\033[0m"
-
-    # -------------------------------#
-    #  Fonction d'affichage d'erreur #
-    # -------------------------------#
     def error(msg):
         print("\n" + f"{RED}!{RESET}"*50)
         print(f"{RED} ERREUR : {msg}{RESET}")
@@ -80,19 +106,15 @@ def move_chat(chat, plateau, score, conversion, what_square):
         print("Il n'y a plus de chats sur le plateau !")
         return chat, score
 
-    print("\n=== PHASE CHATS ===")
+    print(f"\n{ORANGE}=== PHASE CHATS ==={RESET}")
     print(f"Vous devez déplacer {nb_chats_a_bouger} chat{'s' if nb_chats_a_bouger > 1 else ''}.")
     print(f"Chats disponibles: {len(chat)}")
     chats_deplaces = []
 
-    # -----------------------------------------------------#
-    #              BOUCLE SUR LES 7 DÉPLACEMENTS           #
-    # -----------------------------------------------------#
     for i in range(nb_chats_a_bouger):
-
         clear_terminal()
         print_plateau()
-        print(f"\n--- Déplacement {i+1}/{nb_chats_a_bouger} ---")
+        print(f"\n{YELLOW}--- Déplacement {i+1}/{nb_chats_a_bouger} ---{RESET}")
 
         chats_non_deplaces = [c for c in chat if c not in chats_deplaces]
 
@@ -103,28 +125,21 @@ def move_chat(chat, plateau, score, conversion, what_square):
         deplacement_effectue = False
         
         while not deplacement_effectue:
-
-            # --------------------#
-            # Affichage des chats #
-            # --------------------#
             print("Chats pouvant être déplacés :")
             disponibles = []
             for c in chats_non_deplaces:
-                if what_square(c, "C",plateau):
+                if what_square(c, "C", plateau):
                     ligne, col = c
                     lettre = plateau[0][col]
-                    print(f"  - {lettre}{ligne}")
+                    print(f"  - {ORANGE}{lettre}{ligne}{RESET}")
                     disponibles.append(c)
             if not disponibles:
                 print("  Aucun chat disponible pour déplacement.")
                 deplacement_effectue = True
                 break
 
-            # --------------#
-            # Choix du chat #
-            # --------------#
             while True:
-                choix_input = input("Choisir le chat à déplacer (ex: D11, F8): ").strip().upper()
+                choix_input = input(f"Choisir le chat à déplacer (ex: D11, F8): ").strip().upper()
 
                 try:
                     ligne_choix, col_choix = conversion(choix_input)
@@ -138,11 +153,9 @@ def move_chat(chat, plateau, score, conversion, what_square):
                     error("Format invalide. Exemple : A6, D11, 2A...")
 
             ligne_chat, col_chat = chat_a_bouger
-            # --------------------------------#
-            # Colorer le chat dans le plateau #
-            # --------------------------------#
+            # Marquer le chat sélectionné en vert
             plateau[ligne_chat][col_chat] = f"{GREEN}C{RESET}"
-            cases_possibles = what_square(chat_a_bouger, "C",plateau)
+            cases_possibles = what_square(chat_a_bouger, "C", plateau)
 
             if not cases_possibles:
                 clear_terminal()
@@ -153,34 +166,28 @@ def move_chat(chat, plateau, score, conversion, what_square):
 
             for case in cases_possibles:
                 x, y = case
-                if plateau[x][y] == ".":
+                if get_cell_type(plateau[x][y]) == ".":
                     plateau[x][y] = f"{YELLOW}*{RESET}"
 
             clear_terminal()
             print_plateau()
 
-            # ---------------------------#
-            # Affichage des déplacements #
-            # ---------------------------#
             print("Déplacements possibles (tapez 'RETOUR' ou 'BACK' pour changer de chat) :")
             for case in cases_possibles:
                 ligne_case, col_case = case
                 lettre_case = plateau[0][col_case]
                 msg = f"  - {lettre_case}{ligne_case}"
                 if case in sorties:
-                    msg += " (SORTIE)"
+                    msg += f" {GREEN}(SORTIE){RESET}"
                 print(msg)
 
-            # ------------------------#
-            # Choix de la destination #
-            # ------------------------#
             while True:
-                destination = input("\nDestination (A2, B3, 2A, ...) : ").strip().upper()
+                destination = input(f"\n{CYAN}Destination (A2, B3, 2A, ...) : {RESET}").strip().upper()
 
                 if destination in ["RETOUR", "BACK"]:
                     plateau[ligne_chat][col_chat] = "C"
                     for x, y in cases_possibles:
-                        if plateau[x][y] == f"{YELLOW}*{RESET}":
+                        if get_cell_type(plateau[x][y]) == "*":
                             plateau[x][y] = "."
                     deplacement_effectue = False
                     clear_terminal()
@@ -193,14 +200,11 @@ def move_chat(chat, plateau, score, conversion, what_square):
                     if (nouvelle_ligne, nouvelle_colonne) in cases_possibles:
 
                         for x, y in cases_possibles:
-                            if plateau[x][y] == f"{YELLOW}*{RESET}":
+                            if get_cell_type(plateau[x][y]) == "*":
                                 plateau[x][y] = "."
 
-                        # -------------------------#
-                        # Cas sortie → chat évadé  #
-                        # -------------------------#
                         if (nouvelle_ligne, nouvelle_colonne) in sorties:
-                            print(f"\nLe chat s'évade par la sortie {destination} !")
+                            print(f"\n{GREEN}Le chat s'évade par la sortie {destination} !{RESET}")
 
                             plateau[ligne_chat][col_chat] = "."
                             chat.remove(chat_a_bouger)
@@ -208,15 +212,13 @@ def move_chat(chat, plateau, score, conversion, what_square):
 
                             clear_terminal()
                             print_plateau()
-                            print(f"Score : {score} chat évadé(s)\n")
+                            print(f"{GREEN}Score : {score} chat évadé(s){RESET}\n")
 
                             deplacement_effectue = True
                             break
 
-                        # -------------------#
-                        # Déplacement normal #
-                        # -------------------#
                         plateau[ligne_chat][col_chat] = "."
+                        # Laisser le chat en VERT après déplacement
                         plateau[nouvelle_ligne][nouvelle_colonne] = f"{GREEN}C{RESET}"
                         idx = chat.index(chat_a_bouger)
                         chat[idx] = (nouvelle_ligne, nouvelle_colonne)
@@ -239,200 +241,158 @@ def move_chat(chat, plateau, score, conversion, what_square):
                             lettre_case = plateau[0][col_case]
                             msg = f"  - {lettre_case}{ligne_case}"
                             if case in sorties:
-                                msg += " (SORTIE)"
+                                msg += f" {GREEN}(SORTIE){RESET}"
                             print(msg)
 
                 except (ValueError, IndexError, KeyError):
                     error("Format invalide. Exemple : A2, B3, 2A...")
 
             for x, y in cases_possibles:
-                if plateau[x][y] == f"{YELLOW}*{RESET}":
+                if get_cell_type(plateau[x][y]) == "*":
                     plateau[x][y] = "."
 
-    print("\n=== FIN PHASE CHATS ===")
+    # Réinitialiser tous les chats en orange à la fin du tour
+    for ligne_c, col_c in chat:
+        cell_type = get_cell_type(plateau[ligne_c][col_c])
+        if cell_type == "C":
+            plateau[ligne_c][col_c] = "C"
+
+    clear_terminal()
+    print_plateau()
+    print(f"\n{ORANGE}=== FIN PHASE CHATS ==={RESET}")
     print(f"Score actuel : {score} chat{'s' if nb_chats_a_bouger > 1 else ''} évadé{'s' if nb_chats_a_bouger > 1 else ''}")
 
     return chat, score
-#calcul les cases disponibles pour sauter les robots quand on est les gardiens
-def jump_robots(pos_gardien,case_init,plateau):
-    x,y=case_init
+
+def jump_robots(pos_gardien, case_init, plateau):
+    x, y = case_init
     try:
-        if plateau[x][y]=='.' or plateau[x][y]=='C' :
-            if (x,y)!=(0,3):
-                return (x,y)
-        elif plateau[x][y]=='R':
-            x_gard,y_gard=pos_gardien
-            x_diff=x-x_gard
-            y_diff=y-y_gard
-            prochaine_case=(x+x_diff,y+y_diff)
-            return jump_robots(case_init,prochaine_case,plateau)
+        cell_type = get_cell_type(plateau[x][y])
+        if cell_type in ('.', 'C'):
+            if (x, y) != (0, 3):
+                return (x, y)
+        elif cell_type == 'R':
+            x_gard, y_gard = pos_gardien
+            x_diff = x - x_gard
+            y_diff = y - y_gard
+            prochaine_case = (x + x_diff, y + y_diff)
+            return jump_robots(pos_gardien, prochaine_case, plateau)
         else:
             return None
     except IndexError:
         return None
-#verifie que l'utilisateur bouge les 2 gardiens
-#demande le gardiens à bouger et la case choisi
-#appelle what_square() pour savoir si la case est valide
-#si elle est valide effectuer le mouvement
-#et demande le deuxieme gardien
-#!ATTENTION prendre en compte les chat(si on le mange il faut le retirer de la liste)(et ils peuvent sauter par dessus les robot donc rajouter 1 de range)
-def move_gardiens(gardiens,chat,plateau): # A Florentin
-    '''
-        Paramètres:
-        - Gardiens: liste des positions des gardiens
-        - Chat: liste des positions des chats
-        - Plateau: grille de jeu
 
-        Retourne:
-        - Gardiens modifié
-    '''
+def move_gardiens(gardiens, chat, plateau):
     global chat_capture
+    chat_capture = 0
+
     print_plateau()
-    print("\n=== PHASE GARDIENS ===")
+    print(f"\n{RED}=== PHASE GARDIENS ==={RESET}")
     print("\nGardiens disponibles :")
-    for i in range(len(gardiens)):
-        ligne, col = gardiens[i]
+    for i, (ligne, col) in enumerate(gardiens):
         lettre = plateau[0][col]
-        print(f"  Gardien {i} : {lettre}{ligne}")
-    choice=input("Entrer le gardien que vous souhaitez déplacer 0 ou 1 : ")
-    while choice not in ['1','0']:
-        print("Entrez invalide vous devez rentrer 0 ou 1 en fonction du gardiens ci-dessus que vous souhaitez déplacer")
-        choice=input("Entrer le gardien que vous souhaitez déplacer 0 ou 1 : ")
-    choice = int(choice)
-    first_choice=choice
-    second_choice=1-first_choice
-    chat_capture=0
-    ligne, col = gardiens[first_choice]
-    lettre = plateau[0][col]
-    gardien_coord = lettre+str(ligne)
-    case_dispo = what_square(gardiens[first_choice],"W",plateau)
-    clear_terminal()
-    print_plateau()
-    print(f"\nCases disponibles pour le gardien {gardien_coord} :")
-    for ligne, col in case_dispo:
-        lettre = plateau[0][col]
-        print(f"  - {lettre}{ligne}")
+        print(f"  {RED}Gardien {i} : {lettre}{ligne}{RESET}")
 
-    while True:
-                choose_case=input("Sur quelle case souhaitez vous déplacer le premier gardien : ").strip().upper()
+    choice = input("Entrer le gardien que vous souhaitez déplacer 0 ou 1 : ")
+    while choice not in ['0', '1']:
+        choice = input("Entrée invalide, choisissez 0 ou 1 : ")
+    first_choice = int(choice)
+    order = [first_choice, 1 - first_choice]
 
-                try:
-                    case = conversion(choose_case)
-                    if case not in case_dispo:
-                        print("La case que vous avez selectionné n'est pas valide. Veuillez choisir une des cases valides ci-dessus")
-                    else:
-                        break
-                except (ValueError, IndexError, KeyError):
-                    print("Format invalide. Exemple : A6, D11, 2A...")
+    for idx, gardien_id in enumerate(order):
+        posx, posy = gardiens[gardien_id]
+        lettre = plateau[0][posy]
+        gardien_coord = lettre + str(posx)
 
-    posx,posy=gardiens[first_choice]
-    x,y=case
+        case_dispo = what_square(gardiens[gardien_id], "W", plateau)
 
-    if plateau[x][y]=="R":
-        case=jump_robots(gardiens[first_choice],case,plateau)
-        x,y=case
-        if plateau[x][y]=="C":
-            if (x,y) in chat:
-                chat.remove((x,y))
-                chat_capture+=1
-        gardiens[first_choice]= case
-        plateau[posx][posy] = '.'
-        plateau[x][y] = 'W'
-    elif plateau[x][y]=="C":
-        if (x,y) in chat:
-            chat.remove((x,y))
-            chat_capture+=1
-        gardiens[first_choice]= case
-        plateau[posx][posy] = '.'
-        plateau[x][y] = 'W'
-    else:
-        gardiens[first_choice]= case
-        plateau[posx][posy] = '.'
-        plateau[x][y] = 'W'
-               
-    clear_terminal()
-    print_plateau()
+        # --- MARQUAGE ---
+        for x, y in case_dispo:
+            cell_type = get_cell_type(plateau[x][y])
+            if cell_type == ".":
+                plateau[x][y] = f"{YELLOW}*{RESET}"
+            elif cell_type == "C":
+                plateau[x][y] = f"{YELLOW}C{RESET}"
+            elif cell_type == "R":
+                plateau[x][y] = f"{YELLOW}R{RESET}"
 
-    case_dispo = what_square(gardiens[second_choice],"W",plateau)
-    clear_terminal()
-    print_plateau()
-    ligne, col = gardiens[second_choice]
-    lettre = plateau[0][col]
-    gardien_coord = lettre+str(ligne)
-    print(f"\nCases disponibles pour le gardien {gardien_coord} :")
-    for ligne, col in case_dispo:
-        lettre = plateau[0][col]
-        print(f"  - {lettre}{ligne}")
+        clear_terminal()
+        print_plateau()
+        print(f"\nCases disponibles pour le gardien {RED}{gardien_coord}{RESET} :")
+        for x, y in case_dispo:
+            print(f"  - {plateau[0][y]}{x}")
 
-    while True:
+        # --- INPUT ---
+        while True:
+            choose_case = input(
+                f"Sur quelle case souhaitez-vous déplacer le "
+                f"{'premier' if idx == 0 else 'second'} gardien : "
+            ).strip().upper()
+            try:
+                case = conversion(choose_case)
+                if case in case_dispo:
+                    break
+                print("Case invalide.")
+            except (ValueError, IndexError, KeyError):
+                print("Format invalide.")
 
-        choose_case=input("Sur quelle case souhaitez vous déplacer le second gardien : ").strip().upper()
-        try:
-            case=conversion(choose_case)
-            if case not in case_dispo:
-                print("la case que vous souhaitez selectionné n'est pas valide. Veuillez choisir une des cases valides ci-dessus")
-            else:
-                break
-        except (ValueError,IndexError,KeyError):
-            print("Format invalide. Exemple : A6, D11, 2A...")
+        # --- NETTOYAGE ---
+        for x, y in case_dispo:
+            cell_type = get_cell_type(plateau[x][y])
+            if cell_type == "*":
+                plateau[x][y] = "."
+            elif cell_type == "C":
+                plateau[x][y] = "C"
+            elif cell_type == "R":
+                plateau[x][y] = "R"
 
+        x, y = case
+        cell_type = get_cell_type(plateau[x][y])
 
-    posx,posy=gardiens[second_choice]
-    x,y=case
-           
-    if plateau[x][y]=="R":
-       case=jump_robots(gardiens[second_choice],case,plateau)
-       x,y=case
-       if plateau[x][y]=="C":
-            if (x,y) in chat:
-                chat.remove((x,y))
-                chat_capture+=1
-       gardiens[second_choice]=case
-       plateau[posx][posy] = '.'
-       plateau[x][y] = 'W'
-    elif plateau[x][y]=="C":
-        if (x,y) in chat:
-            chat.remove((x,y))
-            chat_capture+=1
-        gardiens[second_choice]= case
-        plateau[posx][posy] = '.'
-        plateau[x][y] = 'W'
-    else:
-        gardiens[second_choice]= case
-        plateau[posx][posy] = '.'
-        plateau[x][y] = 'W'
+        # --- DÉPLACEMENT ---
+        if cell_type == "R":
+            case = jump_robots(gardiens[gardien_id], case, plateau)
+            x, y = case
+            cell_type = get_cell_type(plateau[x][y])
 
-    clear_terminal()
-    print_plateau()
+        if cell_type == "C" and (x, y) in chat:
+            chat.remove((x, y))
+            chat_capture += 1
 
-    print("\n=== FIN PHASE GARDIENS ===")
-    print(f" {chat_capture} chat{'s' if chat_capture > 1 else ''} capturé{'s' if chat_capture > 1 else ''}")
+        gardiens[gardien_id] = (x, y)
+        plateau[posx][posy] = "."
+        plateau[x][y] = "W"
+
+        clear_terminal()
+        print_plateau()
+
+    print(f"\n{RED}=== FIN PHASE GARDIENS ==={RESET}")
+    print(f"{chat_capture} chat{'s' if chat_capture > 1 else ''} capturé{'s' if chat_capture > 1 else ''}")
+
     return gardiens
-#place les robots aleatoirement au debut
+
 def robot_placement(plateau):
     global robot
     while len(robot) != 9:
-        coordonnées = (rd.randint(1,11),rd.randint(1,11))
-        if coordonnées not in chat and coordonnées not in gardiens and coordonnées not in sortie and coordonnées not in robot and coordonnées not in bassin :
+        coordonnées = (rd.randint(1, 11), rd.randint(1, 11))
+        if coordonnées not in chat and coordonnées not in gardiens and coordonnées not in sortie and coordonnées not in robot and coordonnées not in bassin:
             robot.append(coordonnées)
-    for (x,y) in robot:
+    for (x, y) in robot:
         plateau[x][y] = "R"
-#calculer une proba de 1/3
-#si 1 alors appeller what_square()
-#effectuer un mvt aleatoire parmi ceux retourner par what_square()
-def move_robot(robot,plateau): # A Enzo
-    for x,y in robot :
-        peut_bouger = rd.randint(1,3)
-        if peut_bouger == 1 :
-            case_dispo = what_square((x,y), "R",plateau)
+
+def move_robot(robot, plateau):
+    for x, y in robot:
+        peut_bouger = rd.randint(1, 3)
+        if peut_bouger == 1:
+            case_dispo = what_square((x, y), "R", plateau)
             nouvelle_coordonne_x, nouvelle_coordonne_y = rd.choice(case_dispo)
             plateau[x][y] = "."
             plateau[nouvelle_coordonne_x][nouvelle_coordonne_y] = "R"
-            indice = robot.index((x,y))
-            robot[indice] = (nouvelle_coordonne_x,nouvelle_coordonne_y)
-    return 
-# fonction conversion qui va recupérer les coordonnées entrées par l'utilisateur et les convertir en tuple (x,y) (case)
-def conversion(case: str) -> tuple: #A Hector
+            indice = robot.index((x, y))
+            robot[indice] = (nouvelle_coordonne_x, nouvelle_coordonne_y)
+    return
+
+def conversion(case: str) -> tuple:
     case = case.strip()
     lettre = ''
     nombre = ''
@@ -443,122 +403,121 @@ def conversion(case: str) -> tuple: #A Hector
             nombre += c
     if len(lettre) != 1 or len(nombre) == 0:
         raise ValueError("Format invalide : ex. A6 ou 6A")
-    colonne = ord(lettre.upper()) - ord('A') + 1  
-    ligne = int(nombre)                           
+    colonne = ord(lettre.upper()) - ord('A') + 1
+    ligne = int(nombre)
     return (ligne, colonne)
-#La fonction prend en entrée la case de la piece etudié et son type : "C","W" ou "R" 
-#Elle retourne la liste des cases diponibles pour un deplacement autour
-#Elle est appelée dans les fonctions move_robot, move_chat et move_gardien
-def what_square(case :tuple,types:str,plateau:list)->list: # A Gaël
+
+def what_square(case: tuple, types: str, plateau: list) -> list:
     liste_case_disp = []
-    x,y = case
+    x, y = case
     if types == "C":
-        for i in range(-1 if x > 1 else 0,2 if x < 11 else 1):#verifie que le x reste dans le plateau
-            for j in range(-1 if y > 1 else 0, 2 if y < 11 else 1):#verifie que le y reste dans le plateau
-                if plateau[x+i][y+j] in (".","S"):
-                    liste_case_disp.append((x+i,y+j))
-    elif types == "W":
-        for i in range(-1 if x > 1 else 0,2 if x < 11 else 1):
+        for i in range(-1 if x > 1 else 0, 2 if x < 11 else 1):
             for j in range(-1 if y > 1 else 0, 2 if y < 11 else 1):
-                if plateau[x+i][y+j] in (".","C","R"):
-                    if plateau[x+i][y+j] == "R":
-                        case_dispo=jump_robots(case,(x+i,y+j),plateau)
+                cell_type = get_cell_type(plateau[x + i][y + j])
+                if cell_type in (".", "S"):
+                    liste_case_disp.append((x + i, y + j))
+    elif types == "W":
+        for i in range(-1 if x > 1 else 0, 2 if x < 11 else 1):
+            for j in range(-1 if y > 1 else 0, 2 if y < 11 else 1):
+                cell_type = get_cell_type(plateau[x + i][y + j])
+                if cell_type in (".", "C", "R"):
+                    if cell_type == "R":
+                        case_dispo = jump_robots(case, (x + i, y + j), plateau)
                         if case_dispo != None:
-                            liste_case_disp.append((x+i,y+j))
-                    else :
-                        liste_case_disp.append((x+i,y+j))
+                            liste_case_disp.append((x + i, y + j))
+                    else:
+                        liste_case_disp.append((x + i, y + j))
     elif types == "R":
-        for i in (-1,1):
-            if plateau[x+i if x+i != 12 else 0][y] == ".":
-                liste_case_disp.append((x+i,y))
-        for j in (-1,1):
-            if plateau[x][y+j if y+j != 12 else 0] == ".":
-                liste_case_disp.append((x,y+j))
+        for i in (-1, 1):
+            if x + i != 12 and x + i != 0:
+                cell_type = get_cell_type(plateau[x + i][y])
+                if cell_type == ".":
+                    liste_case_disp.append((x + i, y))
+        for j in (-1, 1):
+            if y + j != 12 and y + j != 0:
+                cell_type = get_cell_type(plateau[x][y + j])
+                if cell_type == ".":
+                    liste_case_disp.append((x, y + j))
     return liste_case_disp
+
 def menu():
+    print(f"{CYAN}╔═══════════════════════════════════╗{RESET}")
+    print(f"{CYAN}║     BIENVENUE À ESCATE GAME      ║{RESET}")
+    print(f"{CYAN}╚═══════════════════════════════════╝{RESET}\n")
     print("Entrer le nom du joueur 1 :")
     nom_j1 = str(input())
     print("Entrer le nom du joueur 2 :")
     nom_j2 = str(input())
-    print("1 : Lancer la partie \n2 : Règles du jeu \nSélectioner 1 ou 2")
+    print(f"\n{YELLOW}1{RESET} : Lancer la partie")
+    print(f"{YELLOW}2{RESET} : Règles du jeu")
+    print("\nSélectionner 1 ou 2")
     nb = input()
-    while nb not in ["1","2"]:
-        print("Selection Invalide. Veuillez sélectioner 1 ou 2")
+    while nb not in ["1", "2"]:
+        print("Sélection Invalide. Veuillez sélectionner 1 ou 2")
         nb = input()
-    if nb == "2" :
-        print("Le jeu EsCATe Game se joue à deux joueurs, sur un plateau carré de 11x11 cases,\n" 
-            "\n"
-            "qui représente une pension pour chats. L’un des joueurs contrôle un groupe de\n"
-            "\n"
-            "quatorze chats qui essaient de s’évader. L’autre joueur contrôle deux gardiens qui\n"
-            "\n"
-            "tentent de capturer les chats avant leur fuite.\n"
-            "Il existe trois types d’acteurs dans ce jeu, les chats, les gardiens, et des robots \n" 
-            "aspirateur autonomes, activés par les gardiens pour effrayer les chats:\n"
-                        "- Le groupe de chats est composé de quatorze chats. Chaque chat\n"
-                        "occupe une case du plateau. Ils commencent la partie dans une zone\n"
-                        "qui leur est réservée (voir Figure 1).\n"
-                        "- Les deux gardiens occupent chacun une case. Ils commencent\n"
-                        "toujours la partie en position (2, C) et (2, I) du plateau en Figure 1.\n"
-                        "- Neuf robots aspirateur autonomes ont été activés par les gardiens.\n"
-                        "Chaque robot occupe une case et forme un obstacle infranchissable\n"
-                        "pour les chats. Ils commencent la partie sur neuf cases tirées\n"
-                        "aléatoirement.\n"
-                        "Le plateau est illustré par la Figure 2. Il est composé de 11x11 cases et comporte deux \n"
-                        "zones spéciales et trois sorties réparties comme suit :\n"
-                        "- Une zone où le groupe de chats débute la partie. Cette zone fait \n"
-                        "quatorze cases et se situe au centre, en bas du plateau. \n"
-                        "Les gardiens et les robot aspirateur ne peuvent pas y pénétrer.\n"
-                        "- Une zone centrale qui représente un bassin d’eau infranchissable \n"
-                        "pour les chats, les gardiens, et les robots aspirateur. Ce bassin est\n"
-                        " rectangulaire et s’étale sur six cases au total. \n" 
-                        "Il est représenté par six ’O’ dans la Figure 1.\n"
-                        "- Trois sorties sont disposées en position (1, F ), (5, A), et (5, K) \n" 
-                        "du plateau en Figure 1, représentées par trois ’S’. Une sortie occupe une \n"
-                        "case. Un chat s’évade lorsqu’il se positionne sur une case sortie. Les \n"
-                        "gardiens et les robots ne peuvent pas se positionner sur une sortie.\n"
-            "Sur le plateau, chaque acteur (chat, gardien, robot) se déplace au maximum d’une \n" 
-            "case par tour, à l’horizontale, à la verticale, ou en diagonale (pas de déplacement en\n" 
-            "diagonale pour les robots).\n"
-            
-            "Les déplacements spécifiques sont les suivants :  \n"
-                "- Un chat s’évade en se déplaçant sur une case sortie, et il disparaît directement du plateau.\n"
-                "- Un gardien capture un chat lorsqu’il se déplace sur la case occupé par cechat.\n"
-                "- Seuls les gardiens peuvent sauter par-dessus un robot aspirateur : lors \n" 
-                "d’un déplacement, les gardiens peuvent choisir une case occupée\n" 
-                "par un robot ; ils se retrouvent alors sur la case à l’opposée du robot.\n"
-                "- Le bassin d’eau est infranchissable pour les chats, les gardiens, et les robots \n" 
-                "  aspirateur\n"
-            "Un tour de jeu est décomposé en trois phases : \n" 
-                "Phase ‘chats’ : Le joueur contrôlant les chats en déplace sept, ceux de son choix\n"
-                    ".Un chat ne peut être déplacé qu’une fois par tour.\n" 
-                "Phase ‘gardiens’ : L’autre joueur déplace les deux gardiens. \n" 
-                    "Un gardien ne peutêtre déplacé qu’une fois par tour.\n" 
-                "Phase ‘robots’ : Les robots sont autonomes. A chaque tour, chaque robot a une\n" 
-                    "chance sur trois de bouger. Il se déplace alors d’une case dans une directionaléatoire,\n" 
-                    "horizontale ou verticale.\n"
-
-            "Une manche se termine lorsqu’il ne reste plus de chats sur le plateau, c’est-à-dire que \n" 
-            "chaque chat s’est évadé ou a été capturé par les gardiens avant sa fuite.\n"
-
-            "A la fin d’une manche, le joueur contrôlant les chats gagne un point pour chaque chat qui s’est évadé. \n" 
-            "Le joueur contrôlant les gardiens ne gagne pas de points. Le rôle de chaque joueur est inversé pour la manche suivante. \n" 
-            "Une partie compte deux manches.\n"
-            "Lorsque la partie est terminée, le gagnant est le joueur possédant le plus de points.\n")
-        time.sleep(100)
+    if nb == "2":
+        clear_terminal()
+        print(f"\n{GREEN}╔═══════════════════════════════════════════════════════════════════╗{RESET}")
+        print(f"{GREEN}║              RÈGLES DU JEU : ESCATE GAME                          ║{RESET}")
+        print(f"{GREEN}╚═══════════════════════════════════════════════════════════════════╝{RESET}\n")
         
-    if nb == "1"  :
-        print(nom_j1, nom_j2, "Que le/la meilleur(e) gagne.")
+        print(f"{YELLOW}─── BUT DU JEU ───{RESET}")
+        print("Deux manches avec inversion des rôles.")
+        print(f"{GREEN}1 chat évadé = 1 point pour son joueur.{RESET}\n")
+        
+        print(f"{YELLOW}─── LÉGENDE DES SYMBOLES ───{RESET}")
+        print(f"  {ORANGE}C{RESET} = Chat")
+        print(f"  {RED}W{RESET} = Gardien (Warden)")
+        print(f"  {GRAY}R{RESET} = Robot aspirateur")
+        print(f"  {CYAN}O{RESET} = Bassin d'eau")
+        print(f"  {GREEN}S{RESET} = Sortie")
+        print(f"  {MAGENTA}T{RESET} = Téléporteur")
+        print(f"  {BLUE}F{RESET} = Filet\n")
+        
+        print(f"{YELLOW}─── LES ACTEURS ET OBJETS ───{RESET}")
+        print(f"{ORANGE}• CHATS (14){RESET} : Doivent atteindre une sortie {GREEN}(S){RESET}.")
+        print(f"{RED}• GARDIENS (2){RESET} : Capturent les chats en allant sur leur case.")
+        print(f"{GRAY}• ROBOTS (9){RESET} : Obstacles mobiles. 1/3 de chance de bouger (Horizontal/Vertical uniquement).")
+        print(f"{BLUE}• FILETS (F){RESET} : Le gardien en a 2. Bloque une case ou immobilise un chat 1 tour.")
+        print(f"{MAGENTA}• TÉLÉPORTEURS (T){RESET} : Paire de cases liées. Apparaissent aléatoirement.\n")
+        
+        print(f"{YELLOW}─── MOUVEMENTS SPÉCIFIQUES ───{RESET}")
+        print(f"{ORANGE}CHATS{RESET}/{RED}GARDIENS{RESET} : 1 case (Horizontal, Vertical, Diagonal).")
+        print(f"{RED}SAUT{RESET} : Un gardien peut sauter par-dessus un robot vers la case opposée.")
+        print(f"{MAGENTA}TÉLÉPORTATION{RESET} : 1 seul acteur (Chat ou Gardien) par tour. Envoie sur l'autre T.")
+        print(f"   • Si un {ORANGE}Chat{RESET} l'utilise : T devient C.")
+        print(f"   • Si un {RED}Gardien{RESET} l'utilise : T devient W.")
+        print(f"   • Impossible d'utiliser si la case de sortie est occupée.\n")
+        
+        print(f"{YELLOW}─── ZONES DU PLATEAU (11x11) ───{RESET}")
+        print(f"{GREEN}SORTIES (S){RESET} : (1, F), (5, A), (5, K). Un chat dessus s'évade et disparaît.")
+        print(f"{CYAN}BASSIN (O){RESET} : 6 cases centrales infranchissables par tous.")
+        print(f"DÉPART : En bas du plateau. Interdit aux gardiens et robots.\n")
+        
+        print(f"{YELLOW}─── DÉROULEMENT D'UN TOUR ───{RESET}")
+        print(f"{ORANGE}1. PHASE CHATS{RESET} : Déplacez 7 chats.")
+        print(f"{RED}2. PHASE GARDIENS{RESET} : Déplacez les 2 gardiens + Action Filet.")
+        print(f"{GRAY}3. PHASE ROBOTS{RESET} : Déplacement aléatoire (1/3 de chance par robot).\n")
+        
+        print(f"{YELLOW}─── FIN DE MANCHE ───{RESET}")
+        print("Plus aucun chat sur le plateau (tous évadés ou capturés).\n")
+        
+        print(f"\n{YELLOW}{'═'*70}{RESET}")
+        print(f"{YELLOW}║  Appuyez sur ENTRÉE pour retourner au menu principal...           ║{RESET}")
+        print(f"{YELLOW}{'═'*70}{RESET}")
+        input()
+        
+    if nb == "1":
+        print(f"\n{GREEN}{nom_j1}{RESET} vs {GREEN}{nom_j2}{RESET}")
+        print(f"{YELLOW}Que le/la meilleur(e) gagne !{RESET}\n")
     return
+
 def place_portail(plateau):
-    """
-    Place deux portails de téléportation 'T' sur des cases vides du plateau.
-    """
     global portail
     cases_vides = []
     for i in range(1, len(plateau)):
         for j in range(1, len(plateau[i])):
-            if plateau[i][j] == ".":
+            if get_cell_type(plateau[i][j]) == ".":
                 cases_vides.append((i, j))
 
     portail1, portail2 = rd.sample(cases_vides, 2)
@@ -570,30 +529,31 @@ def place_portail(plateau):
     return plateau
 
 def main():
-    global chat, plateau,robot,gardiens
+    global chat, plateau, robot, gardiens
     menu()
     robot_placement(plateau)
     place_portail(plateau)
     print_plateau()
-    #game 1
+    # game 1
     while len(chat) != 0:
-        move_chat(chat,plateau,score_A,conversion,what_square)
-        move_gardiens(gardiens,chat,plateau)
-        move_robot(robot,plateau)
-    #game 2
+        move_chat(chat, plateau, score_A, conversion, what_square)
+        move_gardiens(gardiens, chat, plateau)
+        move_robot(robot, plateau)
+    # game 2
     plateau = plateau_initial[:]
-    chat = [(11,4),(11,5),(11,6),(11,7),(11,8),(10,4),(10,5),(10,6),(10,7),(10,8),(9,5),(9,6),(9,7),(8,6)]
-    gardiens = [(2,3),(2,9)]
-    robot=[]
-    robot_placement()
+    chat = [(11, 4), (11, 5), (11, 6), (11, 7), (11, 8), (10, 4), (10, 5), (10, 6), (10, 7), (10, 8), (9, 5), (9, 6), (9, 7), (8, 6)]
+    gardiens = [(2, 3), (2, 9)]
+    robot = []
+    robot_placement(plateau)
     while len(chat) != 0:
-        move_chat(chat,plateau,score_B,conversion,what_square)
-        move_gardiens(gardiens,chat,plateau)
-        move_robot(robot,plateau)
+        move_chat(chat, plateau, score_B, conversion, what_square)
+        move_gardiens(gardiens, chat, plateau)
+        move_robot(robot, plateau)
     if score_A > score_B:
-        print("Le joueur A a gagné")
+        print(f"{GREEN}Le joueur A a gagné !{RESET}")
     elif score_A < score_B:
-        print("Le joueur B a gagné")
+        print(f"{GREEN}Le joueur B a gagné !{RESET}")
     else:
-        print("EGALITE")
+        print(f"{YELLOW}ÉGALITÉ !{RESET}")
+
 main()
