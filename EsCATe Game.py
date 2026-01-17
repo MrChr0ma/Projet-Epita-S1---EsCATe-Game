@@ -304,6 +304,7 @@ def move_chat(chat, plateau, score, conversion, what_square):
 
     print("\n=== FIN PHASE CHATS ===")
     print(f"Score actuel : {score} chat{'s' if nb_chats_a_bouger > 1 else ''} évadé{'s' if nb_chats_a_bouger > 1 else ''}")
+    chat_immobile.clear()
 
     return chat, score
 #calcul les cases disponibles pour sauter les robots quand on est les gardiens
@@ -785,6 +786,7 @@ def main():
     else:
         print("EGALITE")
 main()
+
 
 
 
