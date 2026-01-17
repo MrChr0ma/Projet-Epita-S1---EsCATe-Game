@@ -697,3 +697,76 @@ def main():
     else:
         print("EGALITE")
 main()
+
+def menu():
+    print(f"{CYAN}╔═══════════════════════════════════╗{RESET}")
+    print(f"{CYAN}║     BIENVENUE À ESCATE GAME      ║{RESET}")
+    print(f"{CYAN}╚═══════════════════════════════════╝{RESET}\n")
+    print("Entrer le nom du joueur 1 :")
+    nom_j1 = str(input())
+    print("Entrer le nom du joueur 2 :")
+    nom_j2 = str(input())
+    print(f"\n{YELLOW}1{RESET} : Lancer la partie")
+    print(f"{YELLOW}2{RESET} : Règles du jeu")
+    print("\nSélectionner 1 ou 2")
+    nb = input()
+    while nb not in ["1", "2"]:
+        print("Sélection Invalide. Veuillez sélectionner 1 ou 2")
+        nb = input()
+    if nb == "2":
+        clear_terminal()
+        print(f"\n{GREEN}╔═══════════════════════════════════════════════════════════════════╗{RESET}")
+        print(f"{GREEN}║              RÈGLES DU JEU : ESCATE GAME                          ║{RESET}")
+        print(f"{GREEN}╚═══════════════════════════════════════════════════════════════════╝{RESET}\n")
+        
+        print(f"{YELLOW}─── BUT DU JEU ───{RESET}")
+        print("Deux manches avec inversion des rôles.")
+        print(f"{GREEN}1 chat évadé = 1 point pour son joueur.{RESET}\n")
+        
+        print(f"{YELLOW}─── LÉGENDE DES SYMBOLES ───{RESET}")
+        print(f"  {ORANGE}C{RESET} = Chat")
+        print(f"  {RED}W{RESET} = Gardien (Warden)")
+        print(f"  {GRAY}R{RESET} = Robot aspirateur")
+        print(f"  {CYAN}O{RESET} = Bassin d'eau")
+        print(f"  {GREEN}S{RESET} = Sortie")
+        print(f"  {MAGENTA}T{RESET} = Téléporteur")
+        print(f"  {BLUE}F{RESET} = Filet\n")
+        
+        print(f"{YELLOW}─── LES ACTEURS ET OBJETS ───{RESET}")
+        print(f"{ORANGE}• CHATS (14){RESET} : Doivent atteindre une sortie {GREEN}(S){RESET}.")
+        print(f"{RED}• GARDIENS (2){RESET} : Capturent les chats en allant sur leur case.")
+        print(f"{GRAY}• ROBOTS (9){RESET} : Obstacles mobiles. 1/3 de chance de bouger (Horizontal/Vertical uniquement).")
+        print(f"{BLUE}• FILETS (F){RESET} : Le gardien en a 2. Bloque une case ou immobilise un chat 1 tour.")
+        print(f"{MAGENTA}• TÉLÉPORTEURS (T){RESET} : Paire de cases liées. Apparaissent aléatoirement.\n")
+        
+        print(f"{YELLOW}─── MOUVEMENTS SPÉCIFIQUES ───{RESET}")
+        print(f"{ORANGE}CHATS{RESET}/{RED}GARDIENS{RESET} : 1 case (Horizontal, Vertical, Diagonal).")
+        print(f"{RED}SAUT{RESET} : Un gardien peut sauter par-dessus un robot vers la case opposée.")
+        print(f"{MAGENTA}TÉLÉPORTATION{RESET} : 1 seul acteur (Chat ou Gardien) par tour. Envoie sur l'autre T.")
+        print(f"   • Si un {ORANGE}Chat{RESET} l'utilise : T devient C.")
+        print(f"   • Si un {RED}Gardien{RESET} l'utilise : T devient W.")
+        print(f"   • Impossible d'utiliser si la case de sortie est occupée.\n")
+        
+        print(f"{YELLOW}─── ZONES DU PLATEAU (11x11) ───{RESET}")
+        print(f"{GREEN}SORTIES (S){RESET} : (1, F), (5, A), (5, K). Un chat dessus s'évade et disparaît.")
+        print(f"{CYAN}BASSIN (O){RESET} : 6 cases centrales infranchissables par tous.")
+        print(f"DÉPART : En bas du plateau. Interdit aux gardiens et robots.\n")
+        
+        print(f"{YELLOW}─── DÉROULEMENT D'UN TOUR ───{RESET}")
+        print(f"{ORANGE}1. PHASE CHATS{RESET} : Déplacez 7 chats.")
+        print(f"{RED}2. PHASE GARDIENS{RESET} : Déplacez les 2 gardiens + Action Filet.")
+        print(f"{GRAY}3. PHASE ROBOTS{RESET} : Déplacement aléatoire (1/3 de chance par robot).\n")
+        
+        print(f"{YELLOW}─── FIN DE MANCHE ───{RESET}")
+        print("Plus aucun chat sur le plateau (tous évadés ou capturés).\n")
+        
+        print(f"\n{YELLOW}{'═'*70}{RESET}")
+        print(f"{YELLOW}║  Appuyez sur ENTRÉE pour retourner au menu principal...           ║{RESET}")
+        print(f"{YELLOW}{'═'*70}{RESET}")
+        input()
+        
+    if nb == "1":
+        print(f"\n{GREEN}{nom_j1}{RESET} vs {GREEN}{nom_j2}{RESET}")
+        print(f"{YELLOW}Que le/la meilleur(e) gagne !{RESET}\n")
+    return
+
