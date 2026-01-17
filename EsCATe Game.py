@@ -304,21 +304,25 @@ def move_chat(chat, plateau, score, conversion, what_square):
 #calcul les cases disponibles pour sauter les robots quand on est les gardiens
 def jump_robots(pos_gardien,case_init,plateau):
     x,y=case_init
+    print((x,y))
+    time.sleep(12)
     try:
-        if plateau[x][y]=='.' or plateau[x][y]=='C' :
+        if plateau[x][y]== "." or plateau[x][y]== f"{BLUE}C{RESET}" :
             if (x,y)!=(0,3):
                 return (x,y)
-        elif plateau[x][y]=="T":
+        elif plateau[x][y]==f"{GREEN}T{RESET}":
             index_portail = portail.index((x,y))
             portail_libre = 1 - index_portail
             px , py = portail[portail_libre] # calcul la case d arrive du portail
-            if plateau[px][py] == "T" or plateau[px][py] == "C": # verifie si la case est libre
+            if plateau[px][py] == f"{GREEN}T{RESET}" or plateau[px][py] == f"{BLUE}C{RESET}": # verifie si la case est libre
                 return (x,y)
-        elif plateau[x][y]=='R':
+        elif plateau[x][y]==f"{RED}R{RESET}" or plateau[x][y] == "R":
             x_gard,y_gard=pos_gardien
             x_diff=x-x_gard
             y_diff=y-y_gard
             prochaine_case=(x+x_diff,y+y_diff)
+            print(f"l apppel est {case_init,prochaine_case}")
+            time.sleep(10)
             return jump_robots(case_init,prochaine_case,plateau)
         else:
             return None
@@ -330,7 +334,98 @@ def jump_robots(pos_gardien,case_init,plateau):
 #si elle est valide effectuer le mouvement
 #et demande le deuxieme gardien
 #!ATTENTION prendre en compte les chat(si on le mange il faut le retirer de la liste)(et ils peuvent sauter par dessus les robot donc rajouter 1 de range)
-def move_gardiens(gardiens,chat,plateau,score):
+def move_one_gardien(gardiens,chat,plateau,choice):
+    ligne, col = gardiens[choice]
+    lettre = plateau[0][col]
+    gardien_coord = lettre+str(ligne)
+    case_dispo = what_square(gardiens[choice],"W",plateau)
+    for x, y in case_dispo:
+        if plateau[x][y] == ".":
+            plateau[x][y] = f"{RED}*{RESET}"
+        elif plateau[x][y] == "C":
+            plateau[x][y] = f"{RED}C{RESET}"
+        elif plateau[x][y] == "R":
+            plateau[x][y] = f"{RED}R{RESET}"
+        elif plateau[x][y] == "T":
+            plateau[x][y] = f"{RED}T{RESET}"
+
+    clear_terminal()
+    print_plateau()
+    print(f"\nCases disponibles pour le gardien {gardien_coord} :")
+    for ligne, col in case_dispo:
+        lettre = plateau[0][col]
+        print(f"  - {lettre}{ligne}")
+
+    while True:
+                choose_case=input("Sur quelle case souhaitez vous déplacer ce gardien : ").strip().upper()
+
+                try:
+                    case = conversion(choose_case)
+                    if case not in case_dispo:
+                        print("La case que vous avez selectionné n'est pas valide. Veuillez choisir une des cases valides ci-dessus")
+                    else:
+                        break
+                except (ValueError, IndexError, KeyError):
+                    print("Format invalide. Exemple : A6, D11, 2A...")
+
+    posx,posy=gardiens[choice]
+    x,y=case
+
+    if plateau[x][y] == f"{RED}R{RESET}":
+        case = jump_robots(gardiens[choice],case,plateau) #jump_robots(case,(x+i,y+j),plateau)
+        x,y = case
+
+
+    if plateau[x][y] == f"{RED}C{RESET}":
+        if (x,y) in chat:
+            chat.remove((x,y))
+            if (x,y) in portail:
+                    index_portail = portail.index((x,y))
+                    portail_libre = 1 - index_portail
+                    px , py = portail[portail_libre]
+                    gardiens[choice] = (px,py)
+                    plateau[x][y] = "T"   #x et y = coordonnées du gardien 1 choisi par l utilisateur et donc la case sur laquelle il va se deplacer
+                    plateau[posx][posy] = '.' #posx et posy = coordonnées du gardien 1 avant deplacement
+                    plateau[px][py] = 'W' #px et py  = case apres avoir pris le portail de teleportation i.e. les cc de l autre portail
+            else:
+                gardiens[choice] = case
+                plateau[posx][posy] = '.'
+                plateau[x][y] = 'W'
+
+
+    elif plateau[x][y] == f"{RED}T{RESET}":
+        index_portail = portail.index((x,y))
+        portail_libre = 1 - index_portail
+        px , py = portail[portail_libre] # case du deuxieme portail donc case d arrive apres teleportation
+        if plateau[px][py] == "T": # si case libre
+            gardiens[choice] = (px,py)
+            plateau[posx][posy] = '.'
+            plateau[px][py] = 'W'
+        elif plateau[px][py] == 'C': # si il y a un chat sur l arrive on le mange
+            chat.remove((px,py))
+            gardiens[choice] = (px,py)
+            plateau[posx][posy] = '.'
+            plateau[px][py] = 'W'
+    else:
+        gardiens[choice]= case
+        plateau[posx][posy] = '.'
+        plateau[x][y] = 'W'
+
+    for x, y in case_dispo:
+        if plateau[x][y] == f"{RED}*{RESET}":
+            plateau[x][y] = "."
+        elif plateau[x][y] == f"{RED}C{RESET}":
+            plateau[x][y] = "C"
+        elif plateau[x][y] == f"{RED}R{RESET}":
+            plateau[x][y] = "R"
+        elif plateau[x][y] == f"{RED}T{RESET}":
+            plateau[x][y] = "T"
+
+    clear_terminal()
+    print_plateau()
+
+    return 
+def move_gardiens(gardiens,chat,plateau,score): # A Florentin
     '''
         Paramètres:
         - Gardiens: liste des positions des gardiens
@@ -354,187 +449,10 @@ def move_gardiens(gardiens,chat,plateau,score):
     choice = int(choice)
     first_choice=choice
     second_choice=1-first_choice
-    ligne, col = gardiens[first_choice]
-    lettre = plateau[0][col]
-    gardien_coord = lettre+str(ligne)
-    case_dispo = what_square(gardiens[first_choice],"W",plateau)
-    
 
-    plateau[ligne][col] = f"{RED}W{RESET}"
-    
+    move_one_gardien(gardiens,chat,plateau,first_choice)
 
-    for x, y in case_dispo:
-        if plateau[x][y] == ".":
-            plateau[x][y] = f"{YELLOW}*{RESET}"
-        elif plateau[x][y] == "C":
-            plateau[x][y] = f"{YELLOW}C{RESET}"
-        elif plateau[x][y] == "R":
-            plateau[x][y] = f"{YELLOW}R{RESET}"
-        elif plateau[x][y] == "T":
-            plateau[x][y] = f"{YELLOW}T{RESET}"
-    
-    clear_terminal()
-    print_plateau()
-    print(f"\nCases disponibles pour le gardien {gardien_coord} :")
-    for ligne_disp, col_disp in case_dispo:
-        lettre = plateau[0][col_disp]
-        print(f"  - {lettre}{ligne_disp}")
-
-    while True:
-                choose_case=input("Sur quelle case souhaitez vous déplacer le premier gardien : ").strip().upper()
-
-                try:
-                    case = conversion(choose_case)
-                    if case not in case_dispo:
-                        print("La case que vous avez selectionné n'est pas valide. Veuillez choisir une des cases valides ci-dessus")
-                    else:
-                        break
-                except (ValueError, IndexError, KeyError):
-                    print("Format invalide. Exemple : A6, D11, 2A...")
-
-  
-    for x, y in case_dispo:
-        if plateau[x][y] == f"{YELLOW}*{RESET}":
-            plateau[x][y] = "."
-        elif plateau[x][y] == f"{YELLOW}C{RESET}":
-            plateau[x][y] = "C"
-        elif plateau[x][y] == f"{YELLOW}R{RESET}":
-            plateau[x][y] = "R"
-        elif plateau[x][y] == f"{YELLOW}T{RESET}":
-            plateau[x][y] = "T"
-
-    posx,posy=gardiens[first_choice]
-    x,y=case
-
-    if plateau[x][y] == "R":
-        case=jump_robots(gardiens[first_choice],case,plateau)
-        x,y = case
-
-    if plateau[x][y] == "C":
-        if (x,y) in chat:
-            chat.remove((x,y))
-            if (x,y) in portail:
-                    index_portail = portail.index((x,y))
-                    portail_libre = 1 - index_portail
-                    px , py = portail[portail_libre]
-                    gardiens[first_choice] = (px,py)
-                    plateau[x][y] = "T"
-                    plateau[posx][posy] = '.'
-                    plateau[px][py] = 'W'
-            else:
-                gardiens[first_choice] = case
-                plateau[posx][posy] = '.'
-                plateau[x][y] = 'W'
-
-    elif plateau[x][y] == "T":
-        index_portail = portail.index((x,y))
-        portail_libre = 1 - index_portail
-        px , py = portail[portail_libre]
-        if plateau[px][py] == "T":
-            gardiens[first_choice] = (px,py)
-            plateau[posx][posy] = '.'
-            plateau[px][py] = 'W'
-        elif plateau[px][py] == 'C':
-            chat.remove((px,py))
-            gardiens[first_choice] = (px,py)
-            plateau[posx][posy] = '.'
-            plateau[px][py] = 'W'
-    else:
-        gardiens[first_choice]= case
-        plateau[posx][posy] = '.'
-        plateau[x][y] = 'W'
-               
-    # DEUXIÈME GARDIEN
-    case_dispo = what_square(gardiens[second_choice],"W",plateau)
-    ligne, col = gardiens[second_choice]
-    lettre = plateau[0][col]
-    gardien_coord = lettre+str(ligne)
-    
-
-    plateau[ligne][col] = f"{RED}W{RESET}"
-
-    for x, y in case_dispo:
-        if plateau[x][y] == ".":
-            plateau[x][y] = f"{YELLOW}*{RESET}"
-        elif plateau[x][y] == "C":
-            plateau[x][y] = f"{YELLOW}C{RESET}"
-        elif plateau[x][y] == "R":
-            plateau[x][y] = f"{YELLOW}R{RESET}"
-        elif plateau[x][y] == "T":
-            plateau[x][y] = f"{YELLOW}T{RESET}"
-    
-    clear_terminal()
-    print_plateau()
-    print(f"\nCases disponibles pour le gardien {gardien_coord} :")
-    for ligne_disp, col_disp in case_dispo:
-        lettre = plateau[0][col_disp]
-        print(f"  - {lettre}{ligne_disp}")
-
-    while True:
-        choose_case=input("Sur quelle case souhaitez vous déplacer le second gardien : ").strip().upper()
-        try:
-            case=conversion(choose_case)
-            if case not in case_dispo:
-                print("la case que vous souhaitez selectionné n'est pas valide. Veuillez choisir une des cases valides ci-dessus")
-            else:
-                break
-        except (ValueError,IndexError,KeyError):
-            print("Format invalide. Exemple : A6, D11, 2A...")
-
-    for x, y in case_dispo:
-        if plateau[x][y] == f"{YELLOW}*{RESET}":
-            plateau[x][y] = "."
-        elif plateau[x][y] == f"{YELLOW}C{RESET}":
-            plateau[x][y] = "C"
-        elif plateau[x][y] == f"{YELLOW}R{RESET}":
-            plateau[x][y] = "R"
-        elif plateau[x][y] == f"{YELLOW}T{RESET}":
-            plateau[x][y] = "T"
-
-    posx,posy=gardiens[second_choice]
-    x,y=case
-
-    if plateau[x][y] == "R":
-        case=jump_robots(gardiens[second_choice],case,plateau)
-        x,y = case
-
-    if plateau[x][y] == "C":
-        if (x,y) in chat:
-            chat.remove((x,y))
-            if (x,y) in portail:
-                    index_portail = portail.index((x,y))
-                    portail_libre = 1 - index_portail
-                    px , py = portail[portail_libre]
-                    gardiens[second_choice] = (px,py)
-                    plateau[x][y] = "T"
-                    plateau[posx][posy] = '.'
-                    plateau[px][py] = 'W'
-            else:
-                gardiens[second_choice] = case
-                plateau[posx][posy] = '.'
-                plateau[x][y] = 'W'
-
-    elif plateau[x][y] == "T":
-        index_portail = portail.index((x,y))
-        portail_libre = 1 - index_portail
-        px , py = portail[portail_libre]
-        if plateau[px][py] == "T":
-            gardiens[second_choice] = (px,py)
-            plateau[posx][posy] = '.'
-            plateau[px][py] = 'W'
-        elif plateau[px][py] == 'C':
-            chat.remove((px,py))
-            gardiens[second_choice] = (px,py)
-            plateau[posx][posy] = '.'
-            plateau[px][py] = 'W'
-
-    else:
-        gardiens[second_choice]= case
-        plateau[posx][posy] = '.'
-        plateau[x][y] = 'W'
-
-    clear_terminal()
-    print_plateau()
+    move_one_gardien(gardiens,chat,plateau,second_choice)
 
     print("\n=== FIN PHASE GARDIENS ===")
     print(f" {14-len(chat)-score} chat{'s' if (14-len(chat)-score) > 1 else ''} capturé{'s' if (14-len(chat)-score) > 1 else ''}")
@@ -733,6 +651,7 @@ def main():
     else:
         print("EGALITE")
 main()
+
 
 
 
