@@ -304,8 +304,6 @@ def move_chat(chat, plateau, score, conversion, what_square):
 #calcul les cases disponibles pour sauter les robots quand on est les gardiens
 def jump_robots(pos_gardien,case_init,plateau):
     x,y=case_init
-    print((x,y))
-    time.sleep(12)
     try:
         if plateau[x][y]== "." or plateau[x][y]== f"{BLUE}C{RESET}" :
             if (x,y)!=(0,3):
@@ -321,8 +319,6 @@ def jump_robots(pos_gardien,case_init,plateau):
             x_diff=x-x_gard
             y_diff=y-y_gard
             prochaine_case=(x+x_diff,y+y_diff)
-            print(f"l apppel est {case_init,prochaine_case}")
-            time.sleep(10)
             return jump_robots(case_init,prochaine_case,plateau)
         else:
             return None
@@ -651,6 +647,7 @@ def main():
     else:
         print("EGALITE")
 main()
+
 
 
 
