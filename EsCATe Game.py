@@ -38,6 +38,11 @@ robot = []
 bassin = [(3,5),(3,6),(3,7),(4,5),(4,6),(4,7)]
 portail = []
 score_A ,score_B = 0,0
+chat_immobile=[]
+filet_restant=2
+pos_filet=[]
+filet_pose_au_tour = {}  
+tour_actuel = 0
 
 
 
@@ -127,7 +132,7 @@ def move_chat(chat, plateau, score, conversion, what_square):
         print_plateau()
         print(f"\n--- Déplacement {i+1}/{nb_chats_a_bouger} ---")
 
-        chats_non_deplaces = [c for c in chat if c not in chats_deplaces]
+        chats_non_deplaces = [c for c in chat if c not in chats_deplaces and c not in chat_immobile]
 
         if not chats_non_deplaces:
             print("Tous les chats ont été déplacés !")
@@ -324,6 +329,126 @@ def jump_robots(pos_gardien,case_init,plateau):
             return None
     except IndexError:
         return None
+
+def filet(plateau, chat):
+    global filet_restant, chat_immobile, pos_filet
+    
+    if filet_restant == 0:
+        print("Vous avez utilisé vos 2 filets")
+        return
+    
+    print("\n== PLACEMENT DES FILETS ===")
+    print(f"Filets restants: {filet_restant}")
+    print("Faites entrer pour ne pas placer de filet sinon tapez la case souhaitée")
+
+    while filet_restant > 0:
+        placement_filet = input("Sur quelle case souhaitez vous placer le filet : ").strip().upper()
+        if placement_filet == "":
+            print("Aucun filet joué ce tour")
+            break
+        
+        try:
+            placement_final = conversion(placement_filet)
+            x, y = placement_final
+            
+            # Vérifier directement le contenu de la case
+            if plateau[x][y] == ".":
+                plateau[x][y] = "F"
+                pos_filet.append((x, y))
+                filet_pose_au_tour[(x, y)] = tour_actuel
+                filet_restant -= 1
+                clear_terminal()
+                print_plateau()
+                
+                if filet_restant > 0:
+                    suivant = input("Voulez vous placer un autre filet? Y/N: ").strip().upper()
+                    if suivant not in ["Y", "YES"]:
+                        break
+                    else:
+                        # Deuxième filet
+                        placement_filet = input("Sur quelle case souhaitez vous placer le filet : ").strip().upper()
+                        placement_final2 = conversion(placement_filet)
+                        x2, y2 = placement_final2
+                        
+                        if plateau[x2][y2] == ".":
+                            plateau[x2][y2] = "F"
+                            pos_filet.append((x2, y2))
+                            filet_pose_au_tour[(x2, y2)] = tour_actuel
+                            filet_restant -= 1
+                            clear_terminal()
+                            print_plateau()
+                        elif plateau[x2][y2] == "C":
+                            if (x2, y2) in chat:
+                                chat_immobile.append((x2, y2))
+                                print("Chat immobilisé pour 1 tour")
+                                filet_restant -= 1
+                                print(f"Filets restants: {filet_restant}")
+                        
+                        print("Tous les filets sont utilisés")
+                        clear_terminal()
+                        print_plateau()
+                        break
+            
+            elif plateau[x][y] == "C":
+                pos_filet.append((x, y))
+                if (x, y) in chat:
+                    chat_immobile.append((x, y))
+                    print("Chat immobilisé pour 1 tour")
+                filet_restant -= 1
+                print(f"Filets restants: {filet_restant}")
+                clear_terminal()
+                print_plateau()
+                
+                if filet_restant > 0:
+                    suivant = input("Voulez vous placer un autre filet? Y/N: ").strip().upper()
+                    if suivant not in ["Y", "YES"]:
+                        break
+                    else:
+                        # Deuxième filet
+                        placement_filet = input("Sur quelle case souhaitez vous placer le filet : ").strip().upper()
+                        placement_final2 = conversion(placement_filet)
+                        x2, y2 = placement_final2
+                        
+                        if plateau[x2][y2] == ".":
+                            plateau[x2][y2] = "F"
+                            pos_filet.append((x2, y2))
+                            filet_pose_au_tour[(x2, y2)] = tour_actuel
+                            filet_restant -= 1
+                            clear_terminal()
+                            print_plateau()
+                        elif plateau[x2][y2] == "C":
+                            if (x2, y2) in chat:
+                                chat_immobile.append((x2, y2))
+                                print("Chat immobilisé pour 1 tour")
+                                filet_restant -= 1
+                                print(f"Filets restants: {filet_restant}")
+                        
+                        print("Tous les filets sont utilisés")
+                        clear_terminal()
+                        print_plateau()
+                        break
+            else:
+                print("Case déjà occupée. Choisissez soit une case libre soit une case avec un chat")
+        
+        except (ValueError, IndexError, KeyError):
+            print("Format invalide. Exemple : A6, D11, 2A...")
+
+
+def nettoyer_filets(plateau, pos_filet):
+    """Enlève les filets placés sur des cases vides après 1 tour"""
+    filets_a_retirer = []
+    
+    for (x, y) in pos_filet:
+        # Vérifier directement si c'est un F
+        if plateau[x][y] == "F":
+            if (x, y) in filet_pose_au_tour and (tour_actuel - filet_pose_au_tour[(x, y)]) >= 1:
+                plateau[x][y] = "."
+                filets_a_retirer.append((x, y))
+                del filet_pose_au_tour[(x, y)]
+    
+    # Retirer les positions de filets nettoyées
+    for pos in filets_a_retirer:
+        pos_filet.remove(pos)
 #verifie que l'utilisateur bouge les 2 gardiens
 #demande le gardiens à bouger et la case choisi
 #appelle what_square() pour savoir si la case est valide
@@ -432,6 +557,7 @@ def move_gardiens(gardiens,chat,plateau,score): # A Florentin
         - Gardiens modifié
     '''
     print_plateau()
+    filet(plateau,chat)
     print("\n=== PHASE GARDIENS ===")
     print("\nGardiens disponibles :")
     for i in range(len(gardiens)):
@@ -620,26 +746,38 @@ def menu():
     return nom_j1 ,nom_j2
   
 def main():
-    global chat, plateau,robot,gardiens
+    global chat, plateau,robot,gardiens,tour_actuel,pos_filet,filet_restant,filet_pose_au_tour
     J1 , J2 = menu()
     robot_placement(plateau)
     place_portail(plateau)
     print_plateau()
     #game 1
+    filet_restant=2
+    pos_filet=[]
+    tour_actuel = 0
+    filet_pose_au_tour = {}
     while len(chat) != 0:
+        tour_actuel+=1
         move_chat(chat,plateau,score_A,conversion,what_square)
         move_gardiens(gardiens,chat,plateau,score_A)
         move_robot(robot,plateau)
+        nettoyer_filets(plateau, pos_filet)
     #game 2
     plateau = plateau_initial[:]
     chat = [(11,4),(11,5),(11,6),(11,7),(11,8),(10,4),(10,5),(10,6),(10,7),(10,8),(9,5),(9,6),(9,7),(8,6)]
     gardiens = [(2,3),(2,9)]
     robot=[]
+    filet_restant=2
+    pos_filet=[]
+    tour_actuel = 0
+    filet_pose_au_tour = {}
     robot_placement()
     while len(chat) != 0:
+        tour_actuel+=1
         move_chat(chat,plateau,score_B,conversion,what_square)
         move_gardiens(gardiens,chat,plateau,score_B)
         move_robot(robot,plateau)
+        nettoyer_filets(plateau, pos_filet)
     if score_A > score_B:
         print("Le joueur A a gagné")
     elif score_A < score_B:
@@ -647,6 +785,7 @@ def main():
     else:
         print("EGALITE")
 main()
+
 
 
 
