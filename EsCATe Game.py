@@ -598,7 +598,7 @@ def place_portail(plateau):
   
 def menu():
     print(f"{CYAN}╔═══════════════════════════════════╗{RESET}")
-    print(f"{CYAN}║     BIENVENUE À ESCATE GAME      ║{RESET}")
+    print(f"{CYAN}║     BIENVENUE À ESCATE GAME       ║{RESET}")
     print(f"{CYAN}╚═══════════════════════════════════╝{RESET}\n")
     print("Entrer le nom du joueur 1 :")
     nom_j1 = str(input())
@@ -635,20 +635,18 @@ def menu():
         print(f"{RED}• GARDIENS (2){RESET} : Capturent les chats en allant sur leur case.")
         print(f"{GRAY}• ROBOTS (9){RESET} : Obstacles mobiles. 1/3 de chance de bouger (Horizontal/Vertical uniquement).")
         print(f"{BLUE}• FILETS (F){RESET} : Le gardien en a 2. Bloque une case ou immobilise un chat 1 tour.")
-        print(f"{MAGENTA}• TÉLÉPORTEURS (T){RESET} : Paire de cases liées. Apparaissent aléatoirement.\n")
+        print(f"{MAGENTA}• TÉLÉPORTEURS (T){RESET} : Paire de cases liées. Apparaissent aléatoirement en debut de partie.\n")
         
         print(f"{YELLOW}─── MOUVEMENTS SPÉCIFIQUES ───{RESET}")
         print(f"{ORANGE}CHATS{RESET}/{RED}GARDIENS{RESET} : 1 case (Horizontal, Vertical, Diagonal).")
         print(f"{RED}SAUT{RESET} : Un gardien peut sauter par-dessus un robot vers la case opposée.")
-        print(f"{MAGENTA}TÉLÉPORTATION{RESET} : 1 seul acteur (Chat ou Gardien) par tour. Envoie sur l'autre T.")
-        print(f"   • Si un {ORANGE}Chat{RESET} l'utilise : T devient C.")
-        print(f"   • Si un {RED}Gardien{RESET} l'utilise : T devient W.")
+        print(f"{MAGENTA}TÉLÉPORTATION{RESET} : 1 seul acteur (Chat ou Gardien) par tour. Teleporte sur l'autre portail {MAGENTA}T{RESET}.")
         print(f"   • Impossible d'utiliser si la case de sortie est occupée.\n")
         
         print(f"{YELLOW}─── ZONES DU PLATEAU (11x11) ───{RESET}")
         print(f"{GREEN}SORTIES (S){RESET} : (1, F), (5, A), (5, K). Un chat dessus s'évade et disparaît.")
         print(f"{CYAN}BASSIN (O){RESET} : 6 cases centrales infranchissables par tous.")
-        print(f"DÉPART : En bas du plateau. Interdit aux gardiens et robots.\n")
+        print(f"DÉPART : Position toujours identiques à l'exeption des portails et des robots qui apparaissent aléatoirement en debut de partie.\n")
         
         print(f"{YELLOW}─── DÉROULEMENT D'UN TOUR ───{RESET}")
         print(f"{ORANGE}1. PHASE CHATS{RESET} : Déplacez 7 chats.")
@@ -658,19 +656,16 @@ def menu():
         print(f"{YELLOW}─── FIN DE MANCHE ───{RESET}")
         print("Plus aucun chat sur le plateau (tous évadés ou capturés).\n")
         
-        print(f"\n{YELLOW}{'═'*70}{RESET}")
-        print(f"{YELLOW}║  Appuyez sur ENTRÉE pour retourner au menu principal...           ║{RESET}")
-        print(f"{YELLOW}{'═'*70}{RESET}")
+        print(f"\n{YELLOW}╔═════════════════════════════════════════════════════════╗{RESET}")
+        print(  f"{YELLOW}║       Appuyez sur ENTRÉE pour lancer la partie...       ║{RESET}")
+        print(  f"{YELLOW}╚═════════════════════════════════════════════════════════╝{RESET}\n")
         input()
-        
-    if nb == "1":
-        print(f"\n{GREEN}{nom_j1}{RESET} vs {GREEN}{nom_j2}{RESET}")
-        print(f"{YELLOW}Que le/la meilleur(e) gagne !{RESET}\n")
-    return
+
+    return nom_j1 ,nom_j2
   
 def main():
     global chat, plateau,robot,gardiens
-    menu()
+    J1 , J2 = menu()
     robot_placement(plateau)
     place_portail(plateau)
     print_plateau()
@@ -696,4 +691,5 @@ def main():
     else:
         print("EGALITE")
 main()
+
 
