@@ -17,7 +17,20 @@ GRAY = "\033[90m"
 
 
 
-plateau_initial = [ ["  ","A","B","C","D","E","F","G","H","I","J","K"],
+plateau_1 =       [ ["  ","A","B","C","D","E","F","G","H","I","J","K"],
+                    ["1 ",".",".",".",".",".","S",".",".",".",".","."],
+                    ["2 ",".",".","W","T","C",".",".",".","W","C","."],
+                    ["3 ",".",".",".",".","O","O","O",".",".",".","."],
+                    ["4 ",".",".",".",".","O","O","O",".",".",".","."],
+                    ["5 ","S","T",".",".",".",".",".",".",".",".","S"],
+                    ["6 ",".",".",".",".",".",".",".",".",".",".","."],
+                    ["7 ",".",".",".",".",".",".",".",".",".",".","."],
+                    ["8 ",".",".",".",".",".",".",".",".",".",".","."],
+                    ["9 ",".",".",".",".",".",".",".",".",".",".","."],
+                    ["10",".",".",".",".",".",".",".",".",".",".","."],
+                    ["11",".",".",".",".",".",".",".",".",".",".","."]]
+
+plateau_2 =       [ ["  ","A","B","C","D","E","F","G","H","I","J","K"],
                     ["1 ",".",".",".",".",".","S",".",".",".",".","."],
                     ["2 ",".",".","W",".",".",".",".",".","W",".","."],
                     ["3 ",".",".",".",".","O","O","O",".",".",".","."],
@@ -29,14 +42,13 @@ plateau_initial = [ ["  ","A","B","C","D","E","F","G","H","I","J","K"],
                     ["9 ",".",".",".",".","C","C","C",".",".",".","."],
                     ["10",".",".",".","C","C","C","C","C",".",".","."],
                     ["11",".",".",".","C","C","C","C","C",".",".","."]]
-
-plateau = plateau_initial.copy()
-chat = [(11,4),(11,5),(11,6),(11,7),(11,8),(10,4),(10,5),(10,6),(10,7),(10,8),(9,5),(9,6),(9,7),(8,6)]
+#chat = [(11,4),(11,5),(11,6),(11,7),(11,8),(10,4),(10,5),(10,6),(10,7),(10,8),(9,5),(9,6),(9,7),(8,6)]
+chat  = [(2,5),(2,10)]
 gardiens = [(2,3),(2,9)]
 sortie = [(1,6),(5,1),(5,11)]
 robot = []
 bassin = [(3,5),(3,6),(3,7),(4,5),(4,6),(4,7)]
-portail = []
+portail = [(2,4),(5,2)]
 score_A ,score_B = 0,0
 chat_immobile=[]
 filet_restant=2
@@ -45,7 +57,7 @@ filet_pose_au_tour = {}
 tour_actuel = 0
 
 
-def print_plateau():
+def print_plateau(plateau):
     for i,ligne in enumerate(plateau):
         for j,case in enumerate(ligne):
             if i == 0 or j == 0:  # En-têtes (lettres et numéros)
@@ -144,7 +156,7 @@ def filet(plateau, chat):
         x, y = case
         if poser_filet(x, y, plateau, chat):
             clear_terminal()
-            print_plateau()
+            print_plateau(plateau)
             print(f"Filets restants : {filet_restant}")
 
             if filet_restant > 0:
@@ -193,7 +205,6 @@ def move_chat(chat, plateau, score, conversion, what_square):
 
     sorties = [(1, 6), (5, 1), (5, 11)]
     nb_chats_a_bouger = min(7, len(chat))
-
     if len(chat) == 0:
         print("Il n'y a plus de chats sur le plateau !")
         return score
@@ -207,9 +218,8 @@ def move_chat(chat, plateau, score, conversion, what_square):
     #              BOUCLE SUR LES 7 DÉPLACEMENTS           #
     # -----------------------------------------------------#
     for i in range(nb_chats_a_bouger):
-
         clear_terminal()
-        print_plateau()
+        print_plateau(plateau)
         print(f"\n--- Déplacement {i+1}/{nb_chats_a_bouger} ---")
 
         chats_non_deplaces = [c for c in chat if c not in chats_deplaces]
@@ -264,7 +274,7 @@ def move_chat(chat, plateau, score, conversion, what_square):
 
             if not cases_possibles:
                 clear_terminal()
-                print_plateau()
+                print_plateau(plateau)
                 error("Aucun déplacement possible pour ce chat.")
                 plateau[ligne_chat][col_chat] = "C" 
                 continue
@@ -280,7 +290,7 @@ def move_chat(chat, plateau, score, conversion, what_square):
                 
 
             clear_terminal()
-            print_plateau()
+            print_plateau(plateau)
 
             # ---------------------------#
             # Affichage des déplacements #
@@ -313,7 +323,7 @@ def move_chat(chat, plateau, score, conversion, what_square):
                             plateau[x][y] = "S"
                     deplacement_effectue = False
                     clear_terminal()
-                    print_plateau()
+                    print_plateau(plateau)
                     break
 
                 try:
@@ -342,7 +352,7 @@ def move_chat(chat, plateau, score, conversion, what_square):
                             score += 1
 
                             clear_terminal()
-                            print_plateau()
+                            print_plateau(plateau)
                             print(f"Score : {score} chat évadé(s)\n")
 
                             deplacement_effectue = True
@@ -376,13 +386,13 @@ def move_chat(chat, plateau, score, conversion, what_square):
                         chats_deplaces.append((nouvelle_ligne, nouvelle_colonne))
 
                         clear_terminal()
-                        print_plateau()
+                        print_plateau(plateau)
                         deplacement_effectue = True
                         break
 
                     else:
                         clear_terminal()
-                        print_plateau()
+                        print_plateau(plateau)
                         error("Déplacement invalide, choisissez une case affichée.")
                         for case in cases_possibles:
                             ligne_case, col_case = case
@@ -457,7 +467,7 @@ def move_one_gardien(gardiens,chat,plateau,choice):
             plateau[x][y] = f"{RED}T{RESET}"
 
     clear_terminal()
-    print_plateau()
+    print_plateau(plateau)
     print(f"\nCases disponibles pour le gardien {gardien_coord} :")
     for ligne, col in case_dispo:
         lettre = plateau[0][col]
@@ -485,12 +495,12 @@ def move_one_gardien(gardiens,chat,plateau,choice):
     posx,posy=gardiens[choice]
     x,y=case
 
-    if plateau[x][y] == f"{RED}R{RESET}":
+    if (x,y) in robot:
         case = jump_robots(gardiens[choice],case,plateau) #jump_robots(case,(x+i,y+j),plateau)
         x,y = case
 
 
-    if plateau[x][y] == f"{RED}C{RESET}":
+    if (plateau[x][y] == f"{RED}C{RESET}"):
         if (x,y) in chat:
             chat.remove((x,y))
             if (x,y) in portail:
@@ -513,19 +523,19 @@ def move_one_gardien(gardiens,chat,plateau,choice):
                 plateau[x][y] = 'W'
 
 
-    elif plateau[x][y] == f"{RED}T{RESET}":
+    elif (x,y) in portail:
         index_portail = portail.index((x,y))
         portail_libre = 1 - index_portail
         px , py = portail[portail_libre] # case du deuxieme portail donc case d arrive apres teleportation
-        if plateau[px][py] == "T": # si case libre
+        if (px,py) in chat: # si il y a un chat sur l arrive on le mange
+            chat.remove((px,py))
             gardiens[choice] = (px,py)
             if (posx,posy) in portail :
                 plateau[posx][posy] = 'T'
             else: 
                 plateau[posx][posy] = '.'
             plateau[px][py] = 'W'
-        elif plateau[px][py] == 'C': # si il y a un chat sur l arrive on le mange
-            chat.remove((px,py))
+        elif (px,py) not in gardiens: # si case libre
             gardiens[choice] = (px,py)
             if (posx,posy) in portail :
                 plateau[posx][posy] = 'T'
@@ -551,7 +561,7 @@ def move_one_gardien(gardiens,chat,plateau,choice):
             plateau[x][y] = "T"
 
     clear_terminal()
-    print_plateau()
+    print_plateau(plateau)
 
     return 
 def move_gardiens(gardiens,chat,plateau,score): # A Florentin
@@ -564,7 +574,7 @@ def move_gardiens(gardiens,chat,plateau,score): # A Florentin
         Retourne:
         - Gardiens modifié
     '''
-    print_plateau()
+    print_plateau(plateau)
     filet(plateau,chat)
     print("\n=== PHASE GARDIENS ===")
     print("\nGardiens disponibles :")
@@ -581,8 +591,8 @@ def move_gardiens(gardiens,chat,plateau,score): # A Florentin
     second_choice=1-first_choice
 
     move_one_gardien(gardiens,chat,plateau,first_choice)
-
-    move_one_gardien(gardiens,chat,plateau,second_choice)
+    if len(chat) != 0 :
+        move_one_gardien(gardiens,chat,plateau,second_choice)
 
     print("\n=== FIN PHASE GARDIENS ===")
     print(f" {14-len(chat)-score} chat{'s' if (14-len(chat)-score) > 1 else ''} capturé{'s' if (14-len(chat)-score) > 1 else ''}")
@@ -592,7 +602,7 @@ def robot_placement(plateau):
     global robot
     while len(robot) != 9:
         coordonnées = (rd.randint(1,11),rd.randint(1,11))
-        if coordonnées not in chat and coordonnées not in gardiens and coordonnées not in sortie and coordonnées not in robot and coordonnées not in bassin :
+        if plateau[coordonnées[0]][coordonnées[1]] == "." :
             robot.append(coordonnées)
     for (x,y) in robot:
         plateau[x][y] = "R"
@@ -652,11 +662,11 @@ def what_square(case :tuple,types:str,plateau:list)->list: # A Gaël
                             liste_case_disp.append((x+i,y+j))
                     else :
                         liste_case_disp.append((x+i,y+j))
-                elif plateau[x+i][y+j] == f"{MAGENTA}T{RESET}":
+                elif (x+i,y+j) in portail:
                     index_portail = portail.index((x+i,y+j))
                     portail_libre = 1 - index_portail
                     px , py = portail[portail_libre]
-                    if plateau[px][py] == "T" or plateau[x][y] == f"{MAGENTA}T{RESET}" or plateau[px][py] == "C" or plateau[x][y] == f"{BLUE}C{RESET}" :
+                    if (px,py) not in gardiens :
                         liste_case_disp.append((x+i,y+j))     
     elif types == "R":
         for i in (-1,1):
@@ -751,11 +761,12 @@ def place_portail(plateau):
 
     return plateau
 def main():
-    global chat, plateau,robot,gardiens,score_A,score_B,tour_actuel,pos_filet,filet_restant,filet_pose_au_tour
+    global chat,robot,gardiens,score_A,score_B,tour_actuel,pos_filet,filet_restant,filet_pose_au_tour
     J1 , J2 = menu()
+    plateau = plateau_1
     robot_placement(plateau)
-    place_portail(plateau)
-    print_plateau()
+    #place_portail(plateau)
+    print_plateau(plateau)
     filet_restant=2
     pos_filet=[]
     tour_actuel = 0
@@ -764,11 +775,13 @@ def main():
     while len(chat) != 0:
         tour_actuel+=1
         move_chat(chat,plateau,score_A,conversion,what_square)
+        if len(chat) == 0 :
+            break
         move_gardiens(gardiens,chat,plateau,score_A)
         move_robot(robot,plateau)
         nettoyer_filets(plateau,pos_filet)
     #game 2
-    plateau = plateau_initial[:]
+    plateau = plateau_2
     chat = [(11,4),(11,5),(11,6),(11,7),(11,8),(10,4),(10,5),(10,6),(10,7),(10,8),(9,5),(9,6),(9,7),(8,6)]
     gardiens = [(2,3),(2,9)]
     robot=[]
@@ -780,6 +793,8 @@ def main():
     while len(chat) != 0:
         tour_actuel+=1
         move_chat(chat,plateau,score_B,conversion,what_square)
+        if len(chat) == 0:
+            break
         move_gardiens(gardiens,chat,plateau,score_B)
         move_robot(robot,plateau)
         nettoyer_filets(plateau,pos_filet)
@@ -790,11 +805,3 @@ def main():
     else:
         print("EGALITE")
 main()
-
-
-
-
-
-
-
-
