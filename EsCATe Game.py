@@ -16,6 +16,7 @@ ORANGE = "\033[38;5;214m"
 GRAY = "\033[90m"
 
 
+
 plateau_1 =       [ ["  ","A","B","C","D","E","F","G","H","I","J","K"],
                     ["1 ",".",".",".",".",".","S",".",".",".",".","."],
                     ["2 ",".",".","W",".",".",".",".",".","W",".","."],
@@ -103,7 +104,7 @@ def nettoyer_filets(plateau, pos_filet):
     for pos in filets_a_retirer:
         pos_filet.remove(pos)
 def poser_filet(x, y, plateau, chat):
-    global filet_restant, chat_immobile, pos_filet, filet_pose_au_tour, tour_actuel
+    global filet_restant, pos_filet, filet_pose_au_tour, tour_actuel,chat_immobile
 
     if plateau[x][y] == ".":
         plateau[x][y] = "F"
@@ -118,6 +119,7 @@ def poser_filet(x, y, plateau, chat):
             chat_immobile.append((x, y))
             print("Chat immobilisé pour 1 tour")
             plateau[x][y] = "F"
+        filet_pose_au_tour[(x, y)] = tour_actuel
         filet_restant -= 1
         return True
 
@@ -185,7 +187,7 @@ def move_chat(chat, plateau, score, conversion, what_square):
     - chat modifié
     - score modifié
     """
-
+    global pos_filet
     # ---------------------#
     #  Codes couleur ANSI  #
     # ---------------------#
@@ -201,9 +203,12 @@ def move_chat(chat, plateau, score, conversion, what_square):
         print("\n" + f"{RED}!{RESET}"*50)
         print(f"{RED} ERREUR : {msg}{RESET}")
         print(f"{RED}!{RESET}"*50 + "\n")
-
+    chat_bloque = 0
     sorties = [(1, 6), (5, 1), (5, 11)]
-    nb_chats_a_bouger = min(7, len(chat))
+    for filet in pos_filet:
+        if filet in chat:
+            chat_bloque += 1
+    nb_chats_a_bouger = min(2, len(chat)-chat_bloque)
     if len(chat) == 0:
         print("Il n'y a plus de chats sur le plateau !")
         return score
@@ -221,7 +226,7 @@ def move_chat(chat, plateau, score, conversion, what_square):
         print_plateau(plateau)
         print(f"\n--- Déplacement {i+1}/{nb_chats_a_bouger} ---")
 
-        chats_non_deplaces = [c for c in chat if c not in chats_deplaces]
+        chats_non_deplaces = [c for c in chat if c not in chats_deplaces and c not in pos_filet]
 
         if not chats_non_deplaces:
             print("Tous les chats ont été déplacés !")
@@ -764,7 +769,7 @@ def main():
     J1 , J2 = menu()
     plateau = plateau_1
     robot_placement(plateau)
-    place_portail(plateau)
+    #place_portail(plateau)
     print_plateau(plateau)
     filet_restant=2
     pos_filet=[]
@@ -780,6 +785,8 @@ def main():
         move_robot(robot,plateau)
         nettoyer_filets(plateau,pos_filet)
     #game 2
+    print("partie2")
+    time.sleep(10)
     plateau = plateau_2
     chat = [(11,4),(11,5),(11,6),(11,7),(11,8),(10,4),(10,5),(10,6),(10,7),(10,8),(9,5),(9,6),(9,7),(8,6)]
     gardiens = [(2,3),(2,9)]
@@ -804,4 +811,3 @@ def main():
     else:
         print("EGALITE")
 main()
-
