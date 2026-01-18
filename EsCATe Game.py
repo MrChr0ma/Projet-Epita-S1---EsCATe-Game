@@ -55,9 +55,10 @@ filet_restant=2
 pos_filet=[]
 filet_pose_au_tour = {}  
 tour_actuel = 0
-
+J1 , J2 = "" , ""
 
 def print_plateau(plateau):
+    global J1,J2,score_A,score_B
     for i,ligne in enumerate(plateau):
         for j,case in enumerate(ligne):
             if i == 0 or j == 0:  # En-têtes (lettres et numéros)
@@ -78,6 +79,25 @@ def print_plateau(plateau):
                 print(".", end=" ")
             else:
                 print(case,end = " ")
+            if j == 11:
+                if i == 0:
+                    print(" "*5+f"LEGENDS : ",end = " ")
+                elif i == 2 :
+                    print(" "*7+f"CHAT : {BLUE}C{RESET}",end = " ")
+                elif i == 3 :
+                    print(" "*7+f"GARDIEN : {RED}W{RESET}",end = " ")
+                elif i == 4 :
+                    print(" "*7+f"PORTAIL : {MAGENTA}T{RESET}",end = " ")
+                elif i == 6 :
+                    print(" "*7+f"BASSIN : {CYAN}O{RESET}",end = " ")
+                elif i == 5 :
+                    print(" "*7+f"SORTIE : {GREEN}S{RESET}",end = " ")
+                elif i == 7 :
+                    print(" "*7+f"ROBOT : {GRAY}R{RESET}",end = " ")
+                elif i == 9 :
+                    print(" "*5+f"SCORE : {J1} : {score_A}",end = " ")
+                elif i == 10:
+                    print(" "*13+f"{J2} : {score_B}",end = " ")
         print("")               
 def clear_terminal():
         if platform.system() == "Windows":
@@ -208,7 +228,7 @@ def move_chat(chat, plateau, score, conversion, what_square):
     for filet in pos_filet:
         if filet in chat:
             chat_bloque += 1
-    nb_chats_a_bouger = min(2, len(chat)-chat_bloque)
+    nb_chats_a_bouger = min(7, len(chat)-chat_bloque)
     if len(chat) == 0:
         print("Il n'y a plus de chats sur le plateau !")
         return score
@@ -765,11 +785,11 @@ def place_portail(plateau):
 
     return plateau
 def main():
-    global chat,robot,gardiens,score_A,score_B,tour_actuel,pos_filet,filet_restant,filet_pose_au_tour
+    global chat,robot,gardiens,score_A,score_B,tour_actuel,pos_filet,filet_restant,filet_pose_au_tour,J1,J2
     J1 , J2 = menu()
     plateau = plateau_1
     robot_placement(plateau)
-    #place_portail(plateau)
+    place_portail(plateau)
     print_plateau(plateau)
     filet_restant=2
     pos_filet=[]
