@@ -766,7 +766,7 @@ def menu():
         input()
 
     return nom_j1 ,nom_j2
-def place_portail(plateau):
+def place_portail(plateau,caseportail=None):
     """
     Place deux portails de téléportation 'T' sur des cases vides du plateau.
     """
@@ -776,20 +776,21 @@ def place_portail(plateau):
         for j in range(1, len(plateau[i])):
             if plateau[i][j] == ".":
                 cases_vides.append((i, j))
-
-    portail1, portail2 = rd.sample(cases_vides, 2)
+    if caseportail == None:
+        portail1, portail2 = rd.sample(cases_vides, 2)
+    else:
+        portail1,portail2 = caseportail
     plateau[portail1[0]][portail1[1]] = "T"
     plateau[portail2[0]][portail2[1]] = "T"
     portail.append(portail1)
     portail.append(portail2)
-
-    return plateau
+    return portail1,portail2
 def main():
     global chat,robot,gardiens,score_A,score_B,tour_actuel,pos_filet,filet_restant,filet_pose_au_tour,J1,J2
     J1 , J2 = menu()
     plateau = plateau_1
     robot_placement(plateau)
-    place_portail(plateau)
+    caseportail = place_portail(plateau)
     print_plateau(plateau)
     filet_restant=2
     pos_filet=[]
@@ -815,6 +816,7 @@ def main():
     pos_filet=[]
     tour_actuel = 0
     filet_pose_au_tour = {}
+    place_portail(plateau,caseportail)
     robot_placement(plateau)
     while len(chat) != 0:
         tour_actuel+=1
