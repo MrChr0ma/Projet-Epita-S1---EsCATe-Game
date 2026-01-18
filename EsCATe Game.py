@@ -638,11 +638,12 @@ def move_robot(robot,plateau): # A Enzo
         peut_bouger = rd.randint(1,3)
         if peut_bouger == 1 :
             case_dispo = what_square((x,y), "R",plateau)
-            nouvelle_coordonne_x, nouvelle_coordonne_y = rd.choice(case_dispo)
-            plateau[x][y] = "."
-            plateau[nouvelle_coordonne_x][nouvelle_coordonne_y] = "R"
-            indice = robot.index((x,y))
-            robot[indice] = (nouvelle_coordonne_x,nouvelle_coordonne_y)
+            if len(case_dispo) != 0:
+                nouvelle_coordonne_x, nouvelle_coordonne_y = rd.choice(case_dispo)
+                plateau[x][y] = "."
+                plateau[nouvelle_coordonne_x][nouvelle_coordonne_y] = "R"
+                indice = robot.index((x,y))
+                robot[indice] = (nouvelle_coordonne_x,nouvelle_coordonne_y)
     return 
 # fonction conversion qui va recupérer les coordonnées entrées par l'utilisateur et les convertir en tuple (x,y) (case)
 def conversion(case: str) -> tuple: #A Hector
@@ -833,3 +834,4 @@ def main():
     else:
         print("EGALITE")
 main()
+
