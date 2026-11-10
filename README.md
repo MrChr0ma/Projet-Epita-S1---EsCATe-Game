@@ -1,104 +1,66 @@
-#  Projet S1 - Jeu « EsCATe Game »
+🇫🇷 [Version française](README.fr.md)
 
-##  Description
+# EsCATe Game
 
-Ce projet consiste à développer un jeu de plateau à deux joueurs nommé **EsCATe Game**.  
-Dans ce jeu, un groupe de chats est retenu dans une pension par deux gardiens. L’objectif pour le premier joueur est de faire s’échapper un maximum de chats, tandis que le second joueur tente de les capturer avant leur fuite.
+A two-player board game played in the terminal, written in Python as the first-semester project of the EPITA Cybersecurity Bachelor (2025-2026).
 
----
+A group of 14 cats is held in a boarding house by two wardens. One player moves the cats and tries to get as many of them as possible to an exit, while the other player moves the wardens and tries to catch them first. The game is played in two rounds with the roles swapped, and each cat that escapes earns its player one point.
 
-##  Objectif
+## Rules (as implemented)
 
-Coder un jeu de plateau à deux joueurs où :
-- Un joueur contrôle **14 chats** qui tentent de s’évader.
-- L’autre joueur contrôle **2 gardiens** qui tentent de capturer les chats.
+- **Board:** 11 × 11 squares, columns `A`–`K` and rows `1`–`11`.
+- **Exits (`S`):** at `F1`, `A5` and `K5`. A cat that reaches an exit escapes and leaves the board.
+- **Pond (`O`):** 6 squares in the centre that nobody can cross.
+- **Cats (`C`, 14):** start at the bottom of the board and move one square in any direction, diagonals included.
+- **Wardens (`W`, 2):** start at `C2` and `I2` and move one square in any direction. A warden catches a cat by moving onto its square, and can jump over a robot to the square behind it.
+- **Vacuum robots (`R`, 9):** placed at random. Each one has a 1-in-3 chance to move one square, horizontally or vertically only.
+- **Teleporters (`T`, a pair):** placed at random. Only one actor (a cat or a warden) can use them per turn, and only if the exit portal is free.
+- **Nets (`F`, 2 per round):** the wardens can drop a net on an empty square to block it, or on a cat to freeze it for one turn.
 
----
+**A turn has three phases:**
+1. The cats' player moves up to 7 cats.
+2. The wardens' player moves both wardens and can drop nets.
+3. The robots move at random.
 
-##  Principe du jeu
+A round ends when no cats are left on the board, whether they escaped or were caught. The in-game menu also shows these rules.
 
-### Plateau
-- Plateau carré de **11x11 cases**.
-- Contient :
-  - Une **zone de départ** pour les chats (14 cases au centre en bas).
-  - Un **bassin d’eau** infranchissable (6 cases au centre).
-  - **Trois sorties** en (1, F), (5, A) et (5, K).
+## Requirements
 
-### Acteurs
-- **14 chats** : débutent dans la zone réservée.
-- **2 gardiens** : débutent en (2, C) et (2, I).
-- **9 robots aspirateurs** : placés aléatoirement en début de partie.
+- Python 3.10 or later. The game uses only the standard library.
+- A terminal that supports ANSI colours (Windows Terminal, PowerShell, or any Linux/macOS terminal).
+- `pygame` is needed only for the experimental graphical prototype (see below).
 
-### Déplacements
-- Tous les acteurs se déplacent d’**au plus une case par tour** (horizontale, verticale ou diagonale – sauf les robots qui ne se déplacent qu’horizontalement ou verticalement).
-- Les gardiens peuvent **sauter par-dessus les robots**.
-- Le bassin est **infranchissable** pour tous.
+## Usage
 
-### Phases d’un tour
-1. **Phase Chats** : Déplacement de 7 chats (au choix).
-2. **Phase Gardiens** : Déplacement des 2 gardiens.
-3. **Phase Robots** : Chaque robot a 1 chance sur 3 de se déplacer aléatoirement.
-
-### Fin de manche et victoire
-- Une manche se termine quand **tous les chats ont quitté le plateau** (évadés ou capturés).
-- Chaque chat évadé rapporte **1 point**.
-- Les rôles sont **inversés** à la manche suivante.
-- La partie se joue en **2 manches**.
-- Le gagnant est le joueur avec le **plus de points**.
-
-### Plateau
-- Plateau carré de **11x11 cases**.
-- Contient :
-  - Une **zone de départ** pour les chats (14 cases au centre en bas).
-  - Un **bassin d'eau** infranchissable (6 cases au centre).
-  - **Trois sorties** en (1, F), (5, A) et (5, K).
-
-#### Figure 1 : Exemple d'un plateau initial
-
-```
-    A B C D E F G H I J K
-1   R         S          
-2       W       R   W    
-3           O O O        
-4         R O O O        
-5   S     R             S
-6                     R  
-7       R       R   R    
-8             C        
-9           C C C         
-10  R     C C C C C        
-11        C C C C C        
-          
+```bash
+git clone https://github.com/MrChr0ma/Projet-Epita-S1---EsCATe-Game.git
+cd Projet-Epita-S1---EsCATe-Game
+python "EsCATe Game.py"
 ```
 
-**Légendes :**
-- `C` : les chats
-- `W` : les deux gardiens (Wardens)
-- `R` : les robots aspirateur
-- `O` : le bassin d'eau
-- `S` : les sorties
----
+Enter both players' names, then choose `1` to start or `2` to read the rules. Squares are typed as letter + number (`A6`, `D11`) or number + letter (`6A`).
 
-##  Contraintes imposées
+## Files
 
-### Fonctionnalités de base
-- Jeu à 2 joueurs respectant les règles décrites.
-- Affichage du plateau dans le terminal.
+| File | Content |
+|---|---|
+| `EsCATe Game.py` | The full terminal game |
+| `EsCATe Game_pygame.py` | An early graphical prototype with pygame (board drawing and piece selection) |
 
-### Fonctionnalités additionnelles
-Deux fonctionnalités supplémentaires doivent être implémentées, par exemple :
-- Sauvegarder / charger une partie.
-- Ajouter un chat avec un rôle spécial.
-- ... ou toute autre idée enrichissant le jeu.
+## Status
 
----
+The terminal game can be played from start to finish (two rounds), with some known issues:
 
-##  Auteurs
+- **Scores stay at 0.** `move_chat()` returns the updated score, but `main()` ignores the return value, so `score_A` and `score_B` are never updated and the game always ends with *EGALITE* (a tie).
+- **The pygame prototype is unfinished.** It loads its images from hard-coded paths (`Desktop\Projet EPITA semestre 1\...`) that are not in this repository, so it does not run as is.
 
-Projet réalisé dans le cadre du Bachelor Cybersécurité à EPITA – Année 2025-26.
+### TODO
+- [ ] Store the value returned by `move_chat()` in `score_A` / `score_B` in `main()`.
+- [ ] Add the pygame images to the repository and load them with relative paths, or drop the prototype.
+- [ ] Add one of the extra features suggested in the brief, such as saving and loading a game.
 
----
+## Authors
 
-##  Licence
+A group project by Hector, Florentin, Enzo and Gaël for the EPITA Cybersecurity Bachelor, 2025-2026.
 
-Ce projet est un travail académique et n’est pas destiné à une utilisation commerciale.
+This is an academic project and is not intended for commercial use.
