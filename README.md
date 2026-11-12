@@ -49,13 +49,11 @@ Enter both players' names, then choose `1` to start or `2` to read the rules. Sq
 
 ## Status
 
-The terminal game can be played from start to finish (two rounds), with some known issues:
+The terminal game can be played from start to finish (two rounds), and the winner is the player whose cats escaped the most. Known issue:
 
-- **Scores stay at 0.** `move_chat()` returns the updated score, but `main()` ignores the return value, so `score_A` and `score_B` are never updated and the game always ends with *EGALITE* (a tie).
 - **The pygame prototype is unfinished.** It loads its images from hard-coded paths (`Desktop\Projet EPITA semestre 1\...`) that are not in this repository, so it does not run as is.
 
 ### TODO
-- [ ] Store the value returned by `move_chat()` in `score_A` / `score_B` in `main()`.
 - [ ] Add the pygame images to the repository and load them with relative paths, or drop the prototype.
 - [ ] Add one of the extra features suggested in the brief, such as saving and loading a game.
 

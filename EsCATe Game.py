@@ -769,7 +769,7 @@ def main():
     #game 1
     while len(chat) != 0:
         tour_actuel+=1
-        move_chat(chat,plateau,score_A,conversion,what_square)
+        score_A = move_chat(chat,plateau,score_A,conversion,what_square)
         if len(chat) == 0 :
             break
         move_gardiens(gardiens,chat,plateau,score_A)
@@ -790,7 +790,7 @@ def main():
     robot_placement(plateau)
     while len(chat) != 0:
         tour_actuel+=1
-        move_chat(chat,plateau,score_B,conversion,what_square)
+        score_B = move_chat(chat,plateau,score_B,conversion,what_square)
         if len(chat) == 0:
             break
         move_gardiens(gardiens,chat,plateau,score_B)

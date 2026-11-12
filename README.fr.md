@@ -49,13 +49,11 @@ Entre le nom des deux joueurs, puis choisis `1` pour lancer la partie ou `2` pou
 
 ## État d'avancement
 
-Le jeu en terminal se joue du début à la fin (deux manches), avec quelques problèmes connus :
+Le jeu en terminal se joue du début à la fin (deux manches), et le gagnant est le joueur dont les chats se sont le plus évadés. Problème connu :
 
-- **Les scores restent à 0.** `move_chat()` renvoie le score mis à jour, mais `main()` ne récupère pas cette valeur. `score_A` et `score_B` ne changent donc jamais, et la partie finit toujours sur *EGALITE*.
 - **Le prototype pygame n'est pas terminé.** Il charge ses images depuis des chemins écrits en dur (`Desktop\Projet EPITA semestre 1\...`) qui ne sont pas dans ce dépôt, donc il ne se lance pas tel quel.
 
 ### TODO
-- [ ] Dans `main()`, stocker la valeur renvoyée par `move_chat()` dans `score_A` / `score_B`.
 - [ ] Ajouter les images du prototype pygame au dépôt et les charger avec des chemins relatifs, ou abandonner le prototype.
 - [ ] Ajouter une des fonctionnalités supplémentaires proposées dans le sujet, par exemple la sauvegarde et le chargement d'une partie.
 
